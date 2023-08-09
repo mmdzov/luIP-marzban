@@ -21,13 +21,13 @@ class User {
 
     if (!chunks.includes(accepted)) return returnData;
 
-    const fullIp = chunks.reduce((prev, curr, index) => {
+    const fullAddress = chunks.reduce((prev, curr, index) => {
       if (curr === accepted) prev = chunks[index - 1];
 
       return prev;
     }, "");
 
-    const [ip, port] = fullIp.split(":");
+    const [ip, port] = fullAddress.split(":");
 
     return { ip, port };
   };
