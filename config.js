@@ -14,7 +14,7 @@ class Ws {
   constructor(params) {
     const url = `wss://${params.url}/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${params.accessToken}`;
 
-    const ws = new WebSocket(url);
+    const ws = new WebSocket(url);  
 
     this.params = params;
 
