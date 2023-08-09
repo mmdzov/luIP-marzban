@@ -76,11 +76,17 @@ class Server {
 }
 
 class Api {
+  /**
+   * @description Marzban access_token
+   */
   accessToken = "";
-  accessTokenType = "";
 
   /**
-   *
+   * @description Default: Bearer
+   */
+  accessTokenType = "Bearer";
+
+  /**
    * @description Creates an instance to communicate with the marzban api
    * @returns {Promise}
    */
@@ -99,7 +105,6 @@ class Api {
   }
 
   /**
-   *
    * @description It receives access_token from Marzban api
    * @returns {Promise}
    */
