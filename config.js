@@ -12,9 +12,13 @@ class Ws {
    *
    */
   constructor(params) {
-    const url = `wss://${params.url}/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${params.accessToken}`;
+    const url = `${process.env.SSL ? "wss" : "ws"}://${
+      params.url
+    }/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
+      params.accessToken
+    }`;
 
-    const ws = new WebSocket(url);  
+    const ws = new WebSocket(url);
 
     this.params = params;
 
@@ -25,7 +29,7 @@ class Ws {
     this.ws.on("message", (msg) => {
       const bufferToString = msg.toString();
 
-    //   new User().getEmail(bufferToString);
+      //   new User().getEmail(bufferToString);
     });
   }
 }

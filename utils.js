@@ -66,7 +66,7 @@ class Server {
     if (+port === 443) _address = ADDRESS;
 
     if (showHttp)
-      if (process.env.SSL) _address = `https://${_address}`;
+      if (process.env.SSL == "true") _address = `https://${_address}`;
       else _address = `http://${_address}`;
 
     if (api) _address += "/api";
