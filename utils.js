@@ -56,7 +56,7 @@ class Server {
   /**
    * @param {string} address ADDRESS address with port. Like: example.com:443
    * @param {boolean} api Return address with api
-   * @returns {string}
+   * @returns {Promise<string>}
    */
   async CleanAddress(address, api = true, showHttp = true) {
     const [ADDRESS, port] = address.split(":");
@@ -79,6 +79,11 @@ class Api {
   accessToken = "";
   accessTokenType = "";
 
+  /**
+   *
+   * @description Creates an instance to communicate with the marzban api
+   * @returns {Promise}
+   */
   async create() {
     const url = await new Server().CleanAddress(
       `${process.env.ADDRESS}:${process.env.PORT}`,
@@ -93,6 +98,11 @@ class Api {
     });
   }
 
+  /**
+   *
+   * @description It receives access_token from Marzban api
+   * @returns {Promise}
+   */
   async token() {
     const { data } = await this.axios.post("/admin/token", {
       username: process.env.USER,
