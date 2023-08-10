@@ -1,4 +1,4 @@
-const { default: axios } = require("axios");
+const fs = require("fs");
 
 class User {
   /**
@@ -12,8 +12,6 @@ class User {
    */
   GetNewUserIP = (data) => {
     let returnData = { ip: "", port: "" };
-
-    console.log(data);
 
     const chunks = data.split(" ");
 
@@ -37,7 +35,7 @@ class User {
    * @param {string} data Raw websocket data
    * @returns {string}
    */
-  getEmail = (data) => {
+  GetEmail = (data) => {
     let returnData = "";
 
     const chunks = data.split(" ");
@@ -54,7 +52,7 @@ class User {
 
 class Server {
   /**
-   * @param {string} address ADDRESS address with port. Like: example.com:443
+   * @param {string} address address with port. Like: example.com:443
    * @param {boolean} api Return address with api
    * @returns {Promise<string>}
    */
@@ -75,48 +73,18 @@ class Server {
   }
 }
 
-class Api {
-  /**
-   * @description Marzban access_token
-   */
-  accessToken = "";
+class File {
+  ForceExistsFile(path, data = null) {
+    if (!fs.existsSync(path)) fs.writeFileSync(path, data ? data : "");
 
-  /**
-   * @description Default: Bearer
-   */
-  accessTokenType = "Bearer";
-
-  /**
-   * @description Creates an instance to communicate with the marzban api
-   * @returns {Promise}
-   */
-  async create() {
-    const url = await new Server().CleanAddress(
-      `${process.env.ADDRESS}:${process.env.PORT}`,
-    );
-
-    this.axios = axios.create({
-      baseURL: url,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+    return;
   }
 
-  /**
-   * @description It receives access_token from Marzban api
-   * @returns {Promise}
-   */
-  async token() {
-    const { data } = await this.axios.post("/admin/token", {
-      username: process.env.USER,
-      password: process.env.PASS,
-    });
+  GetFilesJson(path) {
+    this.ForceExistsFile(path);
 
-    this.accessToken = data.access_token;
-    this.accessTokenType = data.token_type;
+    return JSON.parse(fs.readFileSync(path));
   }
 }
 
-module.exports = { User, Server, Api };
+module.exports = { User, Server, File };
