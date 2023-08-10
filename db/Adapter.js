@@ -1,23 +1,5 @@
-/**
- * @typedef {Object} IPSDataType
- * @property {string} ip
- * @property {number} port
- * @property {string} date
- * @property {boolean} first
- */
-
 const { DBInterface } = require("../interface");
-
-/**
- * @typedef {IPSDataType[]} IPSType
- */
-
-/**
- * @typedef {Object} DataInterfaceType
- * @property {string} email
- * @property {number} allowedUsers
- * @property {IPSType} ips
- */
+const { IPGuard } = require("../utils");
 
 class DBAdapter {
   /**
@@ -36,10 +18,10 @@ class DBAdapter {
   /**
    * @description Read the user from the database
    * @param {string} email User email
-   * @returns {DataInterfaceType}
+   * @returns {DataInterfaceType | Promise<DataInterfaceType>}
    */
   read(email) {
-    this.database.read(email);
+    return this.database.read(email);
   }
 
   /**
@@ -47,7 +29,7 @@ class DBAdapter {
    * @returns {DataInterfaceType[]}
    */
   readAll() {
-    this.database.readAll();
+    return this.database.readAll();
   }
 
   /**
@@ -56,7 +38,7 @@ class DBAdapter {
    * @returns {void}
    */
   deleteUser(email) {
-    this.database.deleteUser(email);
+    return this.database.deleteUser(email);
   }
 
   /**
@@ -66,7 +48,7 @@ class DBAdapter {
    * @returns {void}
    */
   deleteIp(email, ip) {
-    this.database.deleteIp(email, ip);
+    return this.database.deleteIp(email, ip);
   }
 
   /**
@@ -75,7 +57,7 @@ class DBAdapter {
    * @returns {void}
    */
   addUser(data) {
-    this.database.addUser(data);
+    return this.database.addUser(data);
   }
 
   /**
@@ -85,7 +67,11 @@ class DBAdapter {
    * @returns {void}
    */
   addIp(email, ip) {
-    this.database.addIp(email, ip);
+    return new IPGuard().use(
+      ip,
+      () => this.read(email),
+      () => this.database.addIp(email, ip),
+    );
   }
 }
 

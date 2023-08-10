@@ -18,6 +18,23 @@ db.serialize(() => {
 });
 
 class DBSqlite3 extends DBInterface {
+  async read(email) {
+    return await new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (row) {
+              row.ips = JSON.parse(row.ips);
+              resolve(row);
+            } else resolve(null);
+          }
+        });
+      });
+    });
+  }
+
   addUser(data) {
     db.serialize(() => {
       db.run("INSERT INTO users (email, ips) VALUES (?, ?)", [
@@ -49,8 +66,8 @@ class DBSqlite3 extends DBInterface {
 
             // Get the users.json file
             const usersJson = new File().GetFilesJson(join("users.json"));
-            const indexOfUser = usersJson.findIndex((item) =>
-              item.includes(email),
+            const indexOfUser = usersJson.findIndex(
+              (item) => item[0] === email,
             );
 
             const userJson = usersJson[indexOfUser] || [

@@ -2,11 +2,6 @@ const fs = require("fs");
 
 class User {
   /**
-   *
-   * @typedef {Object} NewUserIpType
-   * @property {string} ip
-   * @property {string} port
-   *
    * @param {string} data Raw websocket data
    * @returns {NewUserIpType}
    */
@@ -87,4 +82,46 @@ class File {
   }
 }
 
-module.exports = { User, Server, File };
+/**
+ * @description IP Guard
+ */
+class IPGuard {
+  /**
+   *
+   * @param {IPSDataType} record A user's record includes email, ips array
+   * @param {function[]} callback Return function to allow ip usage
+   *
+   * @returns {void | Function}
+   */
+  use(record, ...callback) {
+    Promise.resolve(callback[0]()).then((data) => {
+      if (!data) return callback[1]();
+
+      const indexOfIp = data.ips.findIndex((item) => item.ip === record.ip);
+
+      const users = new File().GetFilesJson("users.json");
+      const user = users.filter((item) => item[0] === data.email)[0] || null;
+
+      const maxAllowConnection = user ? +user[1] : +process.env.ALL_PROXIED;
+
+      if (indexOfIp !== -1 && data.ips.length >= maxAllowConnection) {
+        // Ban ip address
+
+        console.log("Should ban");
+
+        // console.log(data.ips.length, maxAllowConnection);
+
+        return;
+      }
+
+      return callback[1]();
+    });
+  }
+
+  /**
+   * @param {string} ip
+   */
+  ban(ip) {}
+}
+
+module.exports = { User, Server, File, IPGuard };

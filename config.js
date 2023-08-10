@@ -6,13 +6,7 @@ const DBRedis = require("./db/DBSqlite3");
 
 class Ws {
   /**
-   * @typedef {object} WebSocketConfigType
-   * @property {string} url
-   * @property {string} accessToken
-   *
-   *
    * @param {WebSocketConfigType} params
-   *
    */
   constructor(params) {
     const url = `${process.env.SSL ? "wss" : "ws"}://${
