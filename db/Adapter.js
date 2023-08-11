@@ -67,11 +67,7 @@ class DBAdapter {
    * @returns {void}
    */
   addIp(email, ip) {
-    return new IPGuard().use(
-      ip,
-      () => this.read(email),
-      () => this.database.addIp(email, ip),
-    );
+    return this.database.addIp(email, ip);
   }
 }
 

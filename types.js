@@ -1,6 +1,7 @@
 /**
  * @typedef {Object} IPSDataType
  * @property {string} ip
+ * @property {string} cid
  * @property {number} port
  * @property {string} date
  * @property {boolean} first
@@ -21,10 +22,17 @@
  * @typedef {object} WebSocketConfigType
  * @property {string} url
  * @property {string} accessToken
+ * @property {object} DB
  */
 
 /**
  * @typedef {Object} NewUserIpType
  * @property {string} ip
  * @property {string} port
+ */
+
+/**
+ * @typedef {Object} BanIpConfigAddType
+ * @property {string} ip
+ * @property {string} cid
  */

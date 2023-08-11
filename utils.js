@@ -43,6 +43,41 @@ class User {
 
     return email;
   };
+
+  /**
+   *
+   * @param {string} data Raw websocket data
+   * @returns {number}
+   */
+  GetConnectionId(data) {
+    const chunks = data.split(" ");
+
+    const index = chunks.findIndex((item) => item === "[Info]");
+
+    if (index === -1) return 0;
+
+    const d = chunks[index + 1];
+
+    return JSON.parse(d)[0];
+  }
+
+  /**
+   *
+   * @param {string} data Raw websocket data
+   * @returns {number}
+   */
+  Closed = (data) => {
+    const chunks = data.split(" ");
+
+    const ends =
+      chunks.includes("connection") &&
+      chunks.includes("ends") &&
+      chunks.includes("websocket:");
+
+    if (!ends) return 0;
+
+    return this.GetConnectionId(data);
+  };
 }
 
 class Server {
@@ -70,7 +105,7 @@ class Server {
 
 class File {
   ForceExistsFile(path, data = null) {
-    if (!fs.existsSync(path)) fs.writeFileSync(path, data ? data : "");
+    if (!fs.existsSync(path)) fs.writeFileSync(path, data ? data : undefined);
 
     return;
   }
@@ -109,8 +144,6 @@ class IPGuard {
 
         console.log("Should ban");
 
-        // console.log(data.ips.length, maxAllowConnection);
-
         return;
       }
 
@@ -119,9 +152,20 @@ class IPGuard {
   }
 
   /**
-   * @param {string} ip
+   * @param {BanIpConfigAddType} params
    */
-  ban(ip) {}
+  ban(params) {
+    // ban ip
+    // add ip to banDB
+  }
+
+  /**
+   * @param {string} params
+   */
+  unban(params) {
+    // unban ip
+    // remove ip from bandb
+  }
 }
 
 module.exports = { User, Server, File, IPGuard };

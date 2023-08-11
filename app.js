@@ -1,23 +1,10 @@
-const { Server, File } = require("./utils");
+const { Server } = require("./utils");
 const { Ws, Api } = require("./config");
-const express = require("express");
-const { join } = require("path");
-
-const app = express();
-
+const DBSqlite3 = require("./db/DBSqlite3");
+const def = require("./def");
 require("dotenv").config();
 
-new File().ForceExistsFile(
-  join("users.json"),
-  JSON.stringify(
-    [
-      ["Email1", 1],
-      ["Email2", 2],
-    ],
-    0,
-    1,
-  ),
-);
+def();
 
 const api = new Api();
 
@@ -32,13 +19,7 @@ const api = new Api();
     false,
   );
 
-  const ws = new Ws({ url, accessToken: api.accessToken });
+  const ws = new Ws({ url, accessToken: api.accessToken, DB: new DBSqlite3() });
 
   ws.logs();
 })();
-
-const PORT = process.env.SERVER_PORT;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
