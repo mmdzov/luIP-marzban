@@ -11,7 +11,7 @@ class DBInterface {
     throw new Error("This method must be implemented in the class");
   }
 
-  deleteIp(email, cid) {
+  deleteIp(email, ip) {
     throw new Error("This method must be implemented in the class");
   }
 
@@ -24,4 +24,26 @@ class DBInterface {
   }
 }
 
-module.exports = { DBInterface };
+class LuIPInterface {
+  ban() {
+    throw new Error("This method must be implemented in the class");
+  }
+
+  unban() {
+    throw new Error("This method must be implemented in the class");
+  }
+
+  setUser() {
+    throw new Error("This method must be implemented in the class");
+  }
+
+  unsetUser() {
+    throw new Error("This method must be implemented in the class");
+  }
+
+  clear() {
+    throw new Error("This method must be implemented in the class");
+  }
+}
+
+module.exports = { DBInterface, LuIPInterface };

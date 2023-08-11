@@ -92,6 +92,20 @@ class DBSqlite3 extends DBInterface {
               );
 
               return;
+            } else if (indexOfIp !== -1) {
+              ips[indexOfIp].date = new Date().toLocaleString("en-US");
+
+              db.run(
+                'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
+                [JSON.stringify(ips), email],
+                (updateErr, updateRow) => {
+                  if (updateErr) {
+                    throw new Error(updateErr);
+                  } else {
+                    // console.log("Ip Successfully Added");
+                  }
+                },
+              );
             }
           }
         }
@@ -99,7 +113,7 @@ class DBSqlite3 extends DBInterface {
     });
   }
 
-  deleteIp(email, cid) {
+  deleteIp(email, ip) {
     db.serialize(() => {
       db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
         if (err) throw new Error(err);
@@ -107,7 +121,7 @@ class DBSqlite3 extends DBInterface {
           if (!row) return;
 
           const ips = JSON.parse(row.ips);
-          const newIps = ips.filter((item) => item.cid !== cid);
+          const newIps = ips.filter((item) => item.ip !== ip);
 
           db.run(
             'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',

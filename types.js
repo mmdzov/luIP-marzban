@@ -1,7 +1,6 @@
 /**
  * @typedef {Object} IPSDataType
  * @property {string} ip
- * @property {string} cid
  * @property {number} port
  * @property {string} date
  * @property {boolean} first
@@ -34,5 +33,4 @@
 /**
  * @typedef {Object} BanIpConfigAddType
  * @property {string} ip
- * @property {string} cid
  */

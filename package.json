@@ -4,7 +4,8 @@
   "description": "Limit users in each proxy configuration",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app"
+    "dev": "pm2 start ecosystem.config.js --env development",
+    "start": "pm2 start ecosystem.config.js --env production"
   },
   "repository": {
     "type": "git",

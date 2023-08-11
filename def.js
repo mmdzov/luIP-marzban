@@ -14,7 +14,7 @@ function def() {
     ),
   );
 
-  new File().ForceExistsFile("ban.sqlite");
+  // new File().ForceExistsFile("ban.sqlite");
 }
 
 module.exports = def;

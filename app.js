@@ -2,7 +2,10 @@ const { Server } = require("./utils");
 const { Ws, Api } = require("./config");
 const DBSqlite3 = require("./db/DBSqlite3");
 const def = require("./def");
+const express = require("express");
 require("dotenv").config();
+
+const app = express();
 
 def();
 
@@ -14,7 +17,7 @@ const api = new Api();
   await api.token();
 
   const url = await new Server().CleanAddress(
-    `${process.env.ADDRESS}:${process.env.PORT}`,
+    `${process.env.ADDRESS}:${process.env.PORT_ADDRESS}`,
     false,
     false,
   );
@@ -23,3 +26,9 @@ const api = new Api();
 
   ws.logs();
 })();
+
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

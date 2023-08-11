@@ -104,8 +104,8 @@ class Server {
 }
 
 class File {
-  ForceExistsFile(path, data = null) {
-    if (!fs.existsSync(path)) fs.writeFileSync(path, data ? data : undefined);
+  ForceExistsFile(path, data = undefined) {
+    if (!fs.existsSync(path)) fs.writeFileSync(path, data);
 
     return;
   }
@@ -146,7 +146,6 @@ class IPGuard {
       if (indexOfIp !== -1 && data.ips.length >= maxAllowConnection) {
         // Ban ip address
         this.ban({
-          cid: record.cid,
           ip: record.ip,
         });
 
@@ -164,17 +163,15 @@ class IPGuard {
     // ban ip
 
     // add ip to banDB
-    this.banDB.add(params);
   }
 
   /**
-   * @param {string} cid
+   * @param {string} ip
    */
-  unban(cid) {
+  unban(ip) {
     // unban ip
 
     // remove ip from bandb
-    this.banDB.remove(cid);
   }
 }
 

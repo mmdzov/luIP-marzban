@@ -4,6 +4,7 @@ const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
 const sqlite3 = require("sqlite3");
+const DBSqlite3 = require("./db/DBSqlite3");
 
 class Ws {
   /**
@@ -15,10 +16,10 @@ class Ws {
     }/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
       params.accessToken
     }`;
-    const db = new DBAdapter(this.params.DB);
+    const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
     const user = new User();
-    const ipGuard = new IPGuard(new BanDBConfig());
+    const ipGuard = new IPGuard(new DBSqlite3());
 
     /**
      * someProperty is an example property that is set to `true`
@@ -54,16 +55,23 @@ class Ws {
     });
 
     // Closed connections
-    this.ws.on("message", (msg) => {
-      const bufferToString = msg.toString();
-      const cid = new User().Closed(bufferToString);
+    // this.ws.on("message", async (msg) => {
+    //   const bufferToString = msg.toString();
+    //   const cid = new User().Closed(bufferToString);
 
-      if (cid === 0) return;
+    //   if (cid === 0) return;
 
-      // If the user was connected, delete the connection. If it was blocked, fix it
-      this.db.deleteIp(email, cid);
-      this.ipGuard.unban(cid);
-    });
+    //   const record = await this.db.getRecordWithCid(cid);
+
+    //   //! get details
+    //   console.log("record:", record, cid);
+
+    //   if (!record) return;
+
+    //   // If the user was connected, delete the connection. If it was blocked, fix it
+    //   this.db.deleteIp(record.email, cid);
+    //   this.ipGuard.unban(cid);
+    // });
   }
 }
 
@@ -84,7 +92,7 @@ class Api {
    */
   async create() {
     const url = await new Server().CleanAddress(
-      `${process.env.ADDRESS}:${process.env.PORT}`,
+      `${process.env.ADDRESS}:${process.env.PORT_ADDRESS}`,
     );
 
     this.axios = axios.create({
@@ -101,19 +109,27 @@ class Api {
    * @returns {Promise}
    */
   async token() {
-    const { data } = await this.axios.post("/admin/token", {
-      username: process.env.USER,
-      password: process.env.PASS,
-    });
+    try {
+      const { data } = await this.axios.post("/admin/token", {
+        username: process.env.USER,
+        password: process.env.PASS,
+      });
 
-    this.accessToken = data.access_token;
-    this.accessTokenType = data.token_type;
+      this.accessToken = data.access_token;
+      this.accessTokenType = data.token_type;
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
 class Connection {
+  /**
+   *
+   * @deprecated
+   */
   BanDB() {
-    const dbPath = join(__dirname, "../", "ban.sqlite");
+    const dbPath = join(__dirname, "ban.sqlite");
 
     new File().ForceExistsFile(dbPath);
 
@@ -121,6 +137,9 @@ class Connection {
   }
 }
 
+/**
+ * @deprecated
+ */
 class BanDBConfig {
   constructor() {
     this.db = new Connection().BanDB();
@@ -129,7 +148,7 @@ class BanDBConfig {
       const sql =
         "CREATE TABLE IF NOT EXISTS banned (ip TEXT, cid TEXT, date TEXT)";
 
-      db.run(sql);
+      this.db.run(sql);
     });
   }
 
