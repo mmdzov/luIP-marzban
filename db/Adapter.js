@@ -44,11 +44,11 @@ class DBAdapter {
   /**
    * @description Delete a ip from the user field
    * @param {string} email User email
-   * @param {string} ip User ip
+   * @param {string} cid websocket connection id
    * @returns {void}
    */
-  deleteIp(email, ip) {
-    return this.database.deleteIp(email, ip);
+  deleteIp(email, cid) {
+    return this.database.deleteIp(email, cid);
   }
 
   /**

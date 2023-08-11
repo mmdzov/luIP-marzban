@@ -98,6 +98,32 @@ class DBSqlite3 extends DBInterface {
       });
     });
   }
+
+  deleteIp(email, cid) {
+    db.serialize(() => {
+      db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+        if (err) throw new Error(err);
+        else {
+          if (!row) return;
+
+          const ips = JSON.parse(row.ips);
+          const newIps = ips.filter((item) => item.cid !== cid);
+
+          db.run(
+            'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
+            [JSON.stringify(newIps), email],
+            (updateErr, updateRow) => {
+              if (updateErr) {
+                throw new Error(updateErr);
+              } else {
+                // console.log("Ip Successfully Added");
+              }
+            },
+          );
+        }
+      });
+    });
+  }
 }
 
 module.exports = DBSqlite3;

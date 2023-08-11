@@ -11,7 +11,7 @@ class DBInterface {
     throw new Error("This method must be implemented in the class");
   }
 
-  deleteIp(email, ip) {
+  deleteIp(email, cid) {
     throw new Error("This method must be implemented in the class");
   }
 

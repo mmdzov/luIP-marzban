@@ -16,8 +16,9 @@ class Ws {
     }/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
       params.accessToken
     }`;
-
+    const db = new DBAdapter(this.params.DB);
     const ws = new WebSocket(url);
+    const user = new User();
 
     /**
      * someProperty is an example property that is set to `true`
@@ -26,6 +27,7 @@ class Ws {
      */
     this.params = params;
 
+    this.db = db;
     this.ws = ws;
   }
 
@@ -33,17 +35,15 @@ class Ws {
     // Opened connections
     this.ws.on("message", (msg) => {
       const bufferToString = msg.toString();
-      const { ip, port } = new User().GetNewUserIP(bufferToString);
+      const { ip, port } = this.user.GetNewUserIP(bufferToString);
       if (!ip) return;
-      const email = new User().GetEmail(bufferToString);
-
-      const db = new DBAdapter(this.params.DB);
+      const email = this.user.GetEmail(bufferToString);
 
       new IPGuard().use(
         ip,
-        () => db.read(email),
+        () => this.db.read(email),
         () =>
-          db.addIp(email, {
+          this.db.addIp(email, {
             ip,
             port,
             date: new Date().toLocaleString("en-US"),
@@ -59,6 +59,8 @@ class Ws {
       if (cid === 0) return;
 
       // If the user was connected, delete the connection. If it was blocked, fix it
+      this.db.deleteIp(email, cid);
+      new IPGuard().unban(cid);
     });
   }
 }
@@ -159,7 +161,7 @@ class BanDBConfig {
       const sql = "DELETE FROM banned WHERE cid = ?";
       this.db.run(sql, [cid], (err) => {
         if (err) throw new Error(err);
-        
+
         console.log("Ip unbanned:", cid);
       });
     });
