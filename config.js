@@ -3,7 +3,7 @@ const { User, Server, IPGuard, File } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
-const sqlite3 = require("sqlite3");
+const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
 
 class Ws {

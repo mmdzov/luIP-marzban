@@ -20,7 +20,6 @@ module.exports = {
         NODE_ENV: "development",
         PORT: 4000,
         watch: true,
-        watch_delay: 3000,
         ignore_watch: [
           "./node_modules",
           "./package.json",

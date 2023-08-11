@@ -1,6 +1,6 @@
 const { join } = require("path");
 const { DBInterface } = require("../interface");
-const sqlite3 = require("sqlite3");
+const sqlite3 = require("sqlite3").verbose();
 const { File } = require("../utils");
 
 function connect() {
@@ -136,6 +136,49 @@ class DBSqlite3 extends DBInterface {
           );
         }
       });
+    });
+  }
+
+  deleteInactiveUsers() {
+    const currentTime = new Date().getTime();
+    const fiveMinutesAgo = new Date(
+      currentTime - process.env.CHECK_INACTIVE_USERS_DURATION * 60 * 1000,
+    );
+
+    db.serialize(function () {
+      db.all(
+        `SELECT * FROM users WHERE json_extract(ips, '$[0].date') <= ?`,
+        fiveMinutesAgo.toISOString(),
+        function (err, rows) {
+          if (err) {
+            console.error(err);
+            return;
+          }
+
+          rows.forEach(function (row) {
+            const email = row.email;
+            const ips = JSON.parse(row.ips);
+
+            const updatedIds = ips.filter(function (id) {
+              const idDate = new Date(id.date);
+              return idDate > fiveMinutesAgo;
+            });
+
+            db.run(
+              `UPDATE users SET ips = ? WHERE email = ?`,
+              JSON.stringify(updatedIds),
+              email,
+              function (err) {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+                console.log(`Record with email ${email} updated.`);
+              },
+            );
+          });
+        },
+      );
     });
   }
 }

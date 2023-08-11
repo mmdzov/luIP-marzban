@@ -1,6 +1,8 @@
 # db
 *.sqlite
 
+users.json
+
 # Logs
 logs
 *.log

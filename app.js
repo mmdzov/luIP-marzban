@@ -3,13 +3,15 @@ const { Ws, Api } = require("./config");
 const DBSqlite3 = require("./db/DBSqlite3");
 const def = require("./def");
 const express = require("express");
+const nodeCron = require("node-cron");
+const { DBAdapter } = require("./db/Adapter");
 require("dotenv").config();
 
 const app = express();
+const api = new Api();
+const DBType = new DBSqlite3();
 
 def();
-
-const api = new Api();
 
 (async () => {
   await api.create();
@@ -22,12 +24,18 @@ const api = new Api();
     false,
   );
 
-  const ws = new Ws({ url, accessToken: api.accessToken, DB: new DBSqlite3() });
+  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType });
 
   ws.logs();
 })();
 
 const PORT = process.env.PORT;
+
+nodeCron.schedule(`*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`, () => {
+  const db = new DBAdapter(DBType);
+
+  db.deleteInactiveUsers();
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -69,6 +69,15 @@ class DBAdapter {
   addIp(email, ip) {
     return this.database.addIp(email, ip);
   }
+
+  /**
+   * @description delete inactive users from database record
+   * @returns {void}
+   */  
+  deleteInactiveUsers() {
+    return this.database.deleteInactiveUsers()
+
+  }
 }
 
 module.exports = { DBAdapter };
