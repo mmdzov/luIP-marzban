@@ -161,18 +161,14 @@ class IPGuard {
    */
   ban(params) {
     // ban ip
-
-    // add ip to banDB
   }
 
-  /**
-   * @param {string} ip
-   */
-  unban(ip) {
-    // unban ip
-
-    // remove ip from bandb
-  }
+//   /**
+//    * @param {string} ip
+//    */
+//   unban(ip) {
+//     // unban ip
+//   }
 }
 
 module.exports = { User, Server, File, IPGuard };
