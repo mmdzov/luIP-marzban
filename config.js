@@ -1,10 +1,9 @@
 const WebSocket = require("ws");
-const { User, Server, IPGuard } = require("./utils");
+const { User, Server, IPGuard, File } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
 const sqlite3 = require("sqlite3");
-const { File } = require("./utils");
 
 class Ws {
   /**
@@ -19,6 +18,7 @@ class Ws {
     const db = new DBAdapter(this.params.DB);
     const ws = new WebSocket(url);
     const user = new User();
+    const ipGuard = new IPGuard(new BanDBConfig());
 
     /**
      * someProperty is an example property that is set to `true`
@@ -28,7 +28,9 @@ class Ws {
     this.params = params;
 
     this.db = db;
+    this.user = user;
     this.ws = ws;
+    this.ipGuard = ipGuard;
   }
 
   logs() {
@@ -39,7 +41,7 @@ class Ws {
       if (!ip) return;
       const email = this.user.GetEmail(bufferToString);
 
-      new IPGuard().use(
+      this.ipGuard.use(
         ip,
         () => this.db.read(email),
         () =>
@@ -60,7 +62,7 @@ class Ws {
 
       // If the user was connected, delete the connection. If it was blocked, fix it
       this.db.deleteIp(email, cid);
-      new IPGuard().unban(cid);
+      this.ipGuard.unban(cid);
     });
   }
 }
@@ -147,6 +149,7 @@ class BanDBConfig {
             [{ ...params, date: new Date().toLocaleString("en-US") }],
             (err) => {
               if (err) throw new Error(err);
+              console.log("Ip banned:", cid);
             },
           );
         }

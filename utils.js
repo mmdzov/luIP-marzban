@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { BanDBConfig } = require("./config");
 
 class User {
   /**
@@ -122,8 +121,8 @@ class File {
  * @description IP Guard
  */
 class IPGuard {
-  constructor() {
-    this.banDB = new BanDBConfig();
+  constructor(banDB) {
+    this.banDB = banDB;
   }
 
   /**
