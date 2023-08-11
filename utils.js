@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { BanDBConfig } = require("./config");
 
 class User {
   /**
@@ -121,6 +122,10 @@ class File {
  * @description IP Guard
  */
 class IPGuard {
+  constructor() {
+    this.banDB = new BanDBConfig();
+  }
+
   /**
    *
    * @param {IPSDataType} record A user's record includes email, ips array
@@ -141,8 +146,10 @@ class IPGuard {
 
       if (indexOfIp !== -1 && data.ips.length >= maxAllowConnection) {
         // Ban ip address
-
-        console.log("Should ban");
+        this.ban({
+          cid: record.cid,
+          ip: record.ip,
+        });
 
         return;
       }
@@ -156,15 +163,19 @@ class IPGuard {
    */
   ban(params) {
     // ban ip
+
     // add ip to banDB
+    this.banDB.add(params);
   }
 
   /**
-   * @param {string} params
+   * @param {string} cid
    */
-  unban(params) {
+  unban(cid) {
     // unban ip
+
     // remove ip from bandb
+    this.banDB.remove(cid);
   }
 }
 

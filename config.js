@@ -149,7 +149,7 @@ class BanDBConfig {
           );
         }
 
-        // console.log("Ip already banned");
+        console.log("Ip already banned:", params.cid);
       });
     });
   }
@@ -159,6 +159,8 @@ class BanDBConfig {
       const sql = "DELETE FROM banned WHERE cid = ?";
       this.db.run(sql, [cid], (err) => {
         if (err) throw new Error(err);
+        
+        console.log("Ip unbanned:", cid);
       });
     });
   }
