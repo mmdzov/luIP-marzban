@@ -27,6 +27,7 @@ If you don't have node.js installed on your server, install it with nvm
   git clone https://github.com/mmdzov/luIP-marzban.git
   cd luIP-marzban
   cp .env.example .env
+  npm install
 ```
 
 ## luIP-marzban/.env file
