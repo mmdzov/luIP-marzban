@@ -101,8 +101,8 @@ class Api {
 
     try {
       const { data } = await this.axios.post("/admin/token", {
-        username: process.env.USER,
-        password: process.env.PASS,
+        username: process.env.P_USER,
+        password: process.env.P_PASS,
       });
 
       this.accessToken = data.access_token;

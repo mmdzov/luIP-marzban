@@ -49,8 +49,8 @@ If you don't have node.js installed on your server, install it with nvm
 
 | Parameter | Description                |
 | :-------- | :------------------------- |
-| `USER` | Enter the username of Marzban panel e.g: admin |
-| `PASS` | Enter the password of Marzban panel e.g: admin |
+| `P_USER` | Enter the username of Marzban panel e.g: admin |
+| `P_PASS` | Enter the password of Marzban panel e.g: admin |
 
 #### App configuration
 
