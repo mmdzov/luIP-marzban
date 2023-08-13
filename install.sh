@@ -3,32 +3,29 @@
 # Install node.js & npm
 cd ~
 
-if [ -f /etc/os-release ]; then
-    DISTRO=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-else
-    echo "The operating system is not supported"
-    exit 1
-fi
+# if [ -f /etc/os-release ]; then
+#     DISTRO=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+# else
+#     echo "The operating system is not supported"
+#     exit 1
+# fi
 
-if ! command -v node &> /dev/null; then
+# if ! command -v node &> /dev/null; then
+#     if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "UBUNTU" ] || [ "$DISTRO" == "fedora" ]; then
+#         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+#         source ~/.bashrc
+#         nvm install --lts
 
-  echo "$DISTRO"
+#     else
+#         echo "The operating system is not supported"
+#         exit 1
+#     fi
 
-    if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "UBUNTU" ] || [ "$DISTRO" == "fedora" ]; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-        source ~/.bashrc
-        nvm install --lts
+#     echo "Node.js has been successfully installed."
 
-    else
-        echo "The operating system is not supported"
-        exit 1
-    fi
-
-    echo "Node.js has been successfully installed."
-
-else
-    echo "node.js is installed on your system. Current version: $(node --version)"
-fi
+# else
+#     echo "node.js is installed on your system. Current version: $(node --version)"
+# fi
 
 # clone project
 git clone https://github.com/mmdzov/luIP-marzban.git
