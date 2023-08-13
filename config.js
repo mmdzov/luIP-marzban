@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const { User, Server, IPGuard, File } = require("./utils");
+const { User, Server, IPGuard, PFile } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
@@ -138,7 +138,7 @@ class Connection {
   BanDB() {
     const dbPath = join(__dirname, "ban.sqlite");
 
-    new File().ForceExistsFile(dbPath);
+    new PFile().ForceExistsFile(dbPath);
 
     return new sqlite3.Database(dbPath);
   }

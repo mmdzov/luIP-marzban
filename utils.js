@@ -116,7 +116,7 @@ class Server {
   }
 }
 
-class File {
+class PFile {
   constructor() {}
 
   ForceExistsFile(path, data = undefined) {
@@ -154,7 +154,7 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new File().GetFilesJson("users.json");
+    const users = new PFile().GetFilesJson("users.json");
     const user = users.filter((item) => item[0] === data.email)[0] || null;
 
     const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
@@ -181,4 +181,4 @@ class IPGuard {
   }
 }
 
-module.exports = { User, Server, File, IPGuard };
+module.exports = { User, Server, PFile, IPGuard };

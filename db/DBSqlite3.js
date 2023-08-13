@@ -1,12 +1,12 @@
 const { join } = require("path");
 const { DBInterface } = require("../interface");
 const sqlite3 = require("sqlite3").verbose();
-const { File } = require("../utils");
+const { PFile } = require("../utils");
 
 function connect() {
   const dbPath = join(__dirname, "../", "db.sqlite");
 
-  new File().ForceExistsFile(dbPath);
+  new PFile().ForceExistsFile(dbPath);
 
   return new sqlite3.Database(dbPath);
 }
@@ -67,7 +67,7 @@ class DBSqlite3 extends DBInterface {
           const indexOfIp = ips.findIndex((item) => item.ip === ipData.ip);
 
           // Get the users.json file
-          const usersJson = new File().GetFilesJson(join("users.json"));
+          const usersJson = new PFile().GetFilesJson(join("users.json"));
           const indexOfUser = usersJson.findIndex((item) => item[0] === email);
 
           const userJson = usersJson[indexOfUser] || [
