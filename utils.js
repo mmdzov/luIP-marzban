@@ -1,18 +1,17 @@
 const fs = require("fs");
-const { spawn } = require("child_process");
+const { exec } = require("child_process");
 
 function banIP(ip, durationMinutes) {
   const scriptPath = "./ipban.sh";
-  const args = [scriptPath, ip, durationMinutes.toString()];
+  const command = `bash ${scriptPath} ${ip} ${durationMinutes}`;
 
-  const childProcess = spawn("bash", args);
-
-  childProcess.on("close", (code) => {
-    if (code === 0) {
-      console.log(`IP ${ip} banned successfully.`);
-    } else {
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
       console.error(`Failed to ban IP ${ip}.`);
+      return;
     }
+
+    console.log(`IP ${ip} banned successfully.`);
   });
 }
 
