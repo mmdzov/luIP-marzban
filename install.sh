@@ -76,6 +76,7 @@ function install_iptables() {
 }
 
 if ! check_iptables; then
+  echo "Istall iptables"
   install_iptables
 fi
 
