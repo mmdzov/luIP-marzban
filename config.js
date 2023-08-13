@@ -1,11 +1,10 @@
 const WebSocket = require("ws");
-const { User, Server, IPGuard, PFile } = require("./utils");
+const { User, Server, IPGuard, File } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
 const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
-const { spawn } = require("child_process");
 
 class Ws {
   /**
@@ -59,21 +58,6 @@ class Ws {
       }
     });
   }
-}
-
-function banIP(ip, durationMinutes) {
-  const scriptPath = "./ipban.sh";
-  const args = [scriptPath, ip, durationMinutes.toString()];
-
-  const childProcess = spawn("bash", args);
-
-  childProcess.on("close", (code) => {
-    if (code === 0) {
-      console.log(`IP ${ip} banned successfully.`);
-    } else {
-      console.error(`Failed to ban IP ${ip}.`);
-    }
-  });
 }
 
 class Api {
@@ -138,7 +122,7 @@ class Connection {
   BanDB() {
     const dbPath = join(__dirname, "ban.sqlite");
 
-    new PFile().ForceExistsFile(dbPath);
+    new File().ForceExistsFile(dbPath);
 
     return new sqlite3.Database(dbPath);
   }
@@ -197,4 +181,4 @@ class BanDBConfig {
   }
 }
 
-module.exports = { Ws, Api, Connection, BanDBConfig, banIP };
+module.exports = { Ws, Api, Connection, BanDBConfig };

@@ -1,8 +1,8 @@
 const { join } = require("path");
-const { PFile } = require("./utils");
+const { File } = require("./utils");
 
 function def() {
-  new PFile().ForceExistsFile(
+  new File().ForceExistsFile(
     join("users.json"),
     JSON.stringify(
       [
@@ -14,7 +14,7 @@ function def() {
     ),
   );
 
-  // new PFile().ForceExistsFile("ban.sqlite");
+  // new File().ForceExistsFile("ban.sqlite");
 }
 
 module.exports = def;

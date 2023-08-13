@@ -1,5 +1,20 @@
 const fs = require("fs");
-const { banIP } = require("./config");
+const { spawn } = require("child_process");
+
+function banIP(ip, durationMinutes) {
+  const scriptPath = "./ipban.sh";
+  const args = [scriptPath, ip, durationMinutes.toString()];
+
+  const childProcess = spawn("bash", args);
+
+  childProcess.on("close", (code) => {
+    if (code === 0) {
+      console.log(`IP ${ip} banned successfully.`);
+    } else {
+      console.error(`Failed to ban IP ${ip}.`);
+    }
+  });
+}
 
 class User {
   /**
@@ -116,7 +131,7 @@ class Server {
   }
 }
 
-class PFile {
+class File {
   constructor() {}
 
   ForceExistsFile(path, data = undefined) {
@@ -154,7 +169,7 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new PFile().GetFilesJson("users.json");
+    const users = new File().GetFilesJson("users.json");
     const user = users.filter((item) => item[0] === data.email)[0] || null;
 
     const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
@@ -181,4 +196,4 @@ class IPGuard {
   }
 }
 
-module.exports = { User, Server, PFile, IPGuard };
+module.exports = { User, Server, File, IPGuard };
