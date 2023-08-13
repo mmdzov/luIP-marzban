@@ -5,7 +5,7 @@
 cd ~
 
 if [ -f /etc/os-release ]; then
-    ./etc/os-release
+    /etc/os-release
     DISTRO=$ID
 else
     echo "The operating system is not supported"
