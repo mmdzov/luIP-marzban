@@ -117,6 +117,8 @@ class Server {
 }
 
 class File {
+  constructor() {}
+
   ForceExistsFile(path, data = undefined) {
     if (!fs.existsSync(path)) fs.writeFileSync(path, data);
 
