@@ -12,6 +12,8 @@ fi
 
 if ! command -v node &> /dev/null; then
 
+  echo "$DISTRO"
+
     if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "UBUNTU" ] || [ "$DISTRO" == "fedora" ]; then
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.bashrc
