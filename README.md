@@ -29,6 +29,11 @@ If you don't have node.js installed on your server, install it with nvm
   cp .env.example .env
   npm install
 ```
+#### Install PM2
+```bash
+  npm install pm2 -g
+```
+
 
 ## luIP-marzban/.env file
 ```bash
@@ -86,6 +91,6 @@ In the example below, email1 is the proxy name and 2 represents the maximum numb
 After configuring the project, run it
 ```bash 
   # Open the project folder, then execute the follow command
-  npm start
+  pm2 start ecosystem.config.js
 
 ```
