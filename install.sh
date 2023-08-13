@@ -12,7 +12,7 @@ fi
 
 if ! command -v node &> /dev/null; then
 
-    if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "ubuntu" ] || [ "$DISTRO" == "fedora" ]; then
+    if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "UBUNTU" ] || [ "$DISTRO" == "fedora" ]; then
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.bashrc
         nvm install --lts
