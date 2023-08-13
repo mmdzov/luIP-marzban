@@ -155,7 +155,7 @@ class DBSqlite3 extends DBInterface {
   deleteInactiveUsers() {
     const currentTime = new Date().getTime();
     const fewMinutesAgo = new Date(
-      currentTime - process.env.CHECK_INACTIVE_USERS_DURATION * 60 * 1000,
+      currentTime - +process.env.CHECK_INACTIVE_USERS_DURATION * 60 * 1000,
     );
     console.log(fewMinutesAgo.toISOString());
 
@@ -178,7 +178,7 @@ class DBSqlite3 extends DBInterface {
               return idDate > fewMinutesAgo;
             });
 
-            console.log(updatedIds);
+            console.log("updateIds",updatedIds);
 
             db.run(
               `UPDATE users SET ips = ? WHERE email = ?`,

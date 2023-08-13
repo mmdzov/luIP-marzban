@@ -3,7 +3,7 @@ const { spawn } = require("child_process");
 
 function banIP(ip, durationMinutes) {
   const scriptPath = "./ipban.sh";
-  const args = [scriptPath, ip, durationMinutes.toString()];
+  const args = [scriptPath, ip, `${durationMinutes}`];
 
   const childProcess = spawn("bash", args);
 
