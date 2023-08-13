@@ -5,6 +5,7 @@ const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
 const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
+const { spawn } = require("child_process");
 
 class Ws {
   /**
@@ -36,43 +37,43 @@ class Ws {
 
   logs() {
     // Opened connections
-    this.ws.on("message", (msg) => {
+    this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
-      const { ip, port } = this.user.GetNewUserIP(bufferToString);
-      if (!ip) return;
-      const email = this.user.GetEmail(bufferToString);
+      const data = this.user.GetNewUserIP(bufferToString);
+      if (data.length === 0) return;
 
-      this.ipGuard.use(
-        ip,
-        () => this.db.read(email),
-        () =>
-          this.db.addIp(email, {
-            ip,
-            port,
-            date: new Date().toLocaleString("en-US"),
-          }),
-      );
+      let num = data.length;
+      while (num--) {
+        const item = data[num];
+
+        await this.ipGuard.use(
+          item.ip,
+          () => this.db.read(item.email),
+          () =>
+            this.db.addIp(item.email, {
+              ip: item.ip,
+              port: item.port,
+              date: new Date().toISOString().toString(),
+            }),
+        );
+      }
     });
-
-    // Closed connections
-    // this.ws.on("message", async (msg) => {
-    //   const bufferToString = msg.toString();
-    //   const cid = new User().Closed(bufferToString);
-
-    //   if (cid === 0) return;
-
-    //   const record = await this.db.getRecordWithCid(cid);
-
-    //   //! get details
-    //   console.log("record:", record, cid);
-
-    //   if (!record) return;
-
-    //   // If the user was connected, delete the connection. If it was blocked, fix it
-    //   this.db.deleteIp(record.email, cid);
-    //   this.ipGuard.unban(cid);
-    // });
   }
+}
+
+function banIP(ip, durationMinutes) {
+  const scriptPath = "./ipban.sh";
+  const args = [scriptPath, ip, durationMinutes.toString()];
+
+  const childProcess = spawn("bash", args);
+
+  childProcess.on("close", (code) => {
+    if (code === 0) {
+      console.log(`IP ${ip} banned successfully.`);
+    } else {
+      console.error(`Failed to ban IP ${ip}.`);
+    }
+  });
 }
 
 class Api {
@@ -85,6 +86,8 @@ class Api {
    * @description Default: Bearer
    */
   accessTokenType = "Bearer";
+
+  accessTokenExpireAt = null;
 
   /**
    * @description Creates an instance to communicate with the marzban api
@@ -109,6 +112,9 @@ class Api {
    * @returns {Promise}
    */
   async token() {
+    if (this.accessTokenExpireAt && Date.now() < +this.accessTokenExpireAt)
+      return;
+
     try {
       const { data } = await this.axios.post("/admin/token", {
         username: process.env.USER,
@@ -117,6 +123,7 @@ class Api {
 
       this.accessToken = data.access_token;
       this.accessTokenType = data.token_type;
+      this.accessTokenExpireAt = new Date() + 1000 * 60 * 60;
     } catch (e) {
       console.error(e);
     }
@@ -190,4 +197,4 @@ class BanDBConfig {
   }
 }
 
-module.exports = { Ws, Api, Connection, BanDBConfig };
+module.exports = { Ws, Api, Connection, BanDBConfig, banIP };

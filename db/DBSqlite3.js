@@ -14,7 +14,7 @@ function connect() {
 const db = connect();
 
 db.serialize(() => {
-  db.run("CREATE TABLE IF NOT EXISTS users (email TEXT, ips TEXT)");
+  db.run("CREATE TABLE IF NOT EXISTS users (email TEXT UNIQUE, ips TEXT)");
 });
 
 class DBSqlite3 extends DBInterface {
@@ -55,58 +55,57 @@ class DBSqlite3 extends DBInterface {
           throw new Error(err);
         } else {
           // If the email does not exist, create it and assign the input IP to its first IP
-          if (!row)
+          if (!row) {
             this.addUser({
               email,
               ips: [{ ...ipData, first: true }],
             });
-          else {
-            const ips = JSON.parse(row.ips);
-            const indexOfIp = ips.findIndex((item) => item.ip === ipData.ip);
+            return;
+          }
+          
+          const ips = JSON.parse(row.ips);
+          const indexOfIp = ips.findIndex((item) => item.ip === ipData.ip);
 
-            // Get the users.json file
-            const usersJson = new File().GetFilesJson(join("users.json"));
-            const indexOfUser = usersJson.findIndex(
-              (item) => item[0] === email,
+          // Get the users.json file
+          const usersJson = new File().GetFilesJson(join("users.json"));
+          const indexOfUser = usersJson.findIndex((item) => item[0] === email);
+
+          const userJson = usersJson[indexOfUser] || [
+            email,
+            process.env.MAX_ALLOW_USERS,
+          ];
+
+          // If the IP is not already available and if there is enough space in database, add it
+          if (indexOfIp === -1 && ips.length < +userJson[1]) {
+            ips.push(ipData);
+
+            db.run(
+              'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
+              [JSON.stringify(ips), email],
+              (updateErr, updateRow) => {
+                if (updateErr) {
+                  throw new Error(updateErr);
+                } else {
+                  console.log("Ip Successfully Updated");
+                }
+              },
             );
 
-            const userJson = usersJson[indexOfUser] || [
-              email,
-              process.env.ALL_PROXIED,
-            ];
+            return;
+          } else if (indexOfIp !== -1) {
+            ips[indexOfIp].date = new Date().toISOString().toString();
 
-            // If the IP is not already available and if there is enough space in database, add it
-            if (indexOfIp === -1 && ips.length < +userJson[1]) {
-              ips.push(ipData);
-
-              db.run(
-                'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
-                [JSON.stringify(ips), email],
-                (updateErr, updateRow) => {
-                  if (updateErr) {
-                    throw new Error(updateErr);
-                  } else {
-                    // console.log("Ip Successfully Added");
-                  }
-                },
-              );
-
-              return;
-            } else if (indexOfIp !== -1) {
-              ips[indexOfIp].date = new Date().toLocaleString("en-US");
-
-              db.run(
-                'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
-                [JSON.stringify(ips), email],
-                (updateErr, updateRow) => {
-                  if (updateErr) {
-                    throw new Error(updateErr);
-                  } else {
-                    // console.log("Ip Successfully Added");
-                  }
-                },
-              );
-            }
+            db.run(
+              'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
+              [JSON.stringify(ips), email],
+              (updateErr, updateRow) => {
+                if (updateErr) {
+                  throw new Error(updateErr);
+                } else {
+                  // console.log("Ip Successfully Added");
+                }
+              },
+            );
           }
         }
       });
@@ -141,14 +140,15 @@ class DBSqlite3 extends DBInterface {
 
   deleteInactiveUsers() {
     const currentTime = new Date().getTime();
-    const fiveMinutesAgo = new Date(
+    const fewMinutesAgo = new Date(
       currentTime - process.env.CHECK_INACTIVE_USERS_DURATION * 60 * 1000,
     );
+    console.log(fewMinutesAgo.toISOString());
 
     db.serialize(function () {
       db.all(
         `SELECT * FROM users WHERE json_extract(ips, '$[0].date') <= ?`,
-        fiveMinutesAgo.toISOString(),
+        fewMinutesAgo.toISOString().toString(),
         function (err, rows) {
           if (err) {
             console.error(err);
@@ -161,8 +161,10 @@ class DBSqlite3 extends DBInterface {
 
             const updatedIds = ips.filter(function (id) {
               const idDate = new Date(id.date);
-              return idDate > fiveMinutesAgo;
+              return idDate > fewMinutesAgo;
             });
+
+            console.log(updatedIds);
 
             db.run(
               `UPDATE users SET ips = ? WHERE email = ?`,

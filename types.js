@@ -28,6 +28,7 @@
  * @typedef {Object} NewUserIpType
  * @property {string} ip
  * @property {string} port
+ * @property {string} email
  */
 
 /**

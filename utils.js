@@ -1,28 +1,41 @@
 const fs = require("fs");
+const { banIP } = require("./config");
 
 class User {
   /**
    * @param {string} data Raw websocket data
-   * @returns {NewUserIpType}
+   * @returns {NewUserIpType[]}
    */
   GetNewUserIP = (data) => {
-    let returnData = { ip: "", port: "" };
+    let lines = data
+      .split(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/g)
+      .map((item) => item.trim())
+      .filter((item) => item);
 
-    const chunks = data.split(" ");
+    lines = lines.filter((item) => item.includes("accepted"));
 
-    const accepted = "accepted";
+    if (!lines.length === 0) return [];
 
-    if (!chunks.includes(accepted)) return returnData;
+    const getIp = (params) => {
+      const chunks = params.split(":");
 
-    const fullAddress = chunks.reduce((prev, curr, index) => {
-      if (curr === accepted) prev = chunks[index - 1];
+      if (/[a-zA-Z]/g.test(params)) chunks.shift();
+
+      return { ip: chunks[0], port: chunks[1] };
+    };
+
+    lines = lines.map((item) => ({
+      ...getIp(item.split(" ")[0]),
+      email: item.split(" ").slice(-1)[0].replace(/\d\./g, ""),
+    }));
+
+    return lines.reduce((prev, curr) => {
+      const index = prev.findIndex((item) => item.ip === curr.ip);
+      if (index !== -1) prev[index] = curr;
+      else prev.push(curr);
 
       return prev;
-    }, "");
-
-    const [ip, port] = fullAddress.split(":");
-
-    return { ip, port };
+    }, []);
   };
 
   /**
@@ -130,45 +143,40 @@ class IPGuard {
    * @param {IPSDataType} record A user's record includes email, ips array
    * @param {function[]} callback Return function to allow ip usage
    *
-   * @returns {void | Function}
+   * @returns {void | Promise<Function>}
    */
-  use(record, ...callback) {
-    Promise.resolve(callback[0]()).then((data) => {
-      if (!data) return callback[1]();
+  async use(ip, ...callback) {
+    const data = await callback[0]();
 
-      const indexOfIp = data.ips.findIndex((item) => item.ip === record.ip);
+    if (!data) return await callback[1]();
 
-      const users = new File().GetFilesJson("users.json");
-      const user = users.filter((item) => item[0] === data.email)[0] || null;
+    const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-      const maxAllowConnection = user ? +user[1] : +process.env.ALL_PROXIED;
+    const users = new File().GetFilesJson("users.json");
+    const user = users.filter((item) => item[0] === data.email)[0] || null;
 
-      if (indexOfIp !== -1 && data.ips.length >= maxAllowConnection) {
-        // Ban ip address
-        this.ban({
-          ip: record.ip,
-        });
+    const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
 
-        return;
-      }
+    if (
+      indexOfIp !== -1 &&
+      data.ips.length >= maxAllowConnection &&
+      !data.ips[indexOfIp]?.first
+    ) {
+      this.ban({ ip });
 
-      return callback[1]();
-    });
+      return;
+    }
+
+    return await callback[1]();
   }
 
   /**
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    // ban ip
+    banIP(`${params.ip}`, process.env.BAN_TIME);
+    // console.log("ban", params);
   }
-
-//   /**
-//    * @param {string} ip
-//    */
-//   unban(ip) {
-//     // unban ip
-//   }
 }
 
 module.exports = { User, Server, File, IPGuard };
