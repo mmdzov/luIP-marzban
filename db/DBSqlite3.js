@@ -6,7 +6,9 @@ const { PFile } = require("../utils");
 function connect() {
   const dbPath = join(__dirname, "../", "db.sqlite");
 
-  new PFile().ForceExistsFile(dbPath);
+  const pf = new PFile();
+
+  pf.ForceExistsFile(dbPath);
 
   return new sqlite3.Database(dbPath);
 }
@@ -62,7 +64,7 @@ class DBSqlite3 extends DBInterface {
             });
             return;
           }
-          
+
           const ips = JSON.parse(row.ips);
           const indexOfIp = ips.findIndex((item) => item.ip === ipData.ip);
 
