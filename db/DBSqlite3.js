@@ -35,6 +35,20 @@ class DBSqlite3 extends DBInterface {
     });
   }
 
+  async readAll() {
+    return await new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.get("SELECT * FROM users", (err, row) => {
+          if (err) {
+            reject(err);
+          } else {
+            console.log(row);
+          }
+        });
+      });
+    });
+  }
+
   addUser(data) {
     db.serialize(() => {
       db.run("INSERT INTO users (email, ips) VALUES (?, ?)", [

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#!/bin/bash
+
 declare -A blocked_ips
 
 BLOCK_TIME_MINUTES=$2
@@ -9,13 +11,14 @@ function block_ip() {
   local ip=$1
   local end_time=$(( $(date +%s) + BLOCK_TIME_SECONDS ))
 
-  if iptables -C INPUT -s $ip -j DROP &> /dev/null; then
-    iptables -D INPUT -s $ip -j DROP
+  if sudo iptables-save | grep -q "\-A INPUT -s $ip"; then
+    sudo iptables -D INPUT -s $ip -j DROP
   fi
 
   blocked_ips[$ip]=$end_time
 
-  iptables -A INPUT -s $ip -j DROP
+  sudo iptables -A INPUT -s $ip -j DROP
+  sudo iptables-save > /etc/sysconfig/iptables
 }
 
 function check_ips() {
@@ -27,11 +30,13 @@ function check_ips() {
     if ((current_time >= end_time)); then
       unset blocked_ips[$ip]
 
-      if iptables -C INPUT -s $ip -j DROP &> /dev/null; then
-        iptables -D INPUT -s $ip -j DROP
+      if sudo iptables-save | grep -q "\-A INPUT -s $ip"; then
+        sudo iptables -D INPUT -s $ip -j DROP
+        sudo iptables-save > /etc/sysconfig/iptables
       fi
     fi
   done
 }
 
-check_ips $1
+block_ip $1
+check_ips
