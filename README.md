@@ -41,7 +41,7 @@ If you don't have node.js installed on your server, install it with nvm
 | Parameter | Description                |
 | :-------- | :------------------------- |
 | `ADDRESS` | Your domain or sub domain. e.g: example.com or sub.example.com |
-| `PORT` | Your domain port. e.g: 443 |
+| `PORT_ADDRESS` | Your domain port. e.g: 443 |
 | `SSL` | Did you get domain SSL? e.g: true or false |
 
 
