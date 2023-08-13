@@ -3,39 +3,18 @@
 # Install node.js & npm
 cd ~
 
-if ! command -v node &> /dev/null; then
-
-    if command -v lsb_release &> /dev/null; then
-        distro=$(lsb_release -si)
-    elif [ -f /etc/os-release ]; then
-        distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if command -v node &> /dev/null; then
+        echo "Node.js is installed."
     else
-        echo "The operating system is not supported"
-        exit 1
+        echo "Node.js is not installed. Installing..."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        source ~/.bashrc
+        nvm install node
+        echo "Node.js installed successfully."
     fi
-
-    case "$distro" in
-        ubuntu)
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-            ;;
-        centos | fedora)
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-            ;;
-        *)
-            echo "The operating system is not supported"
-            exit 1
-            ;;
-    esac
-
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    nvm install --lts
-
-    echo "Node.js has been successfully installed."
-
 else
-    echo "Node.js is already installed. Current version: $(node --version)"
+    echo "Unsupported operating system."
 fi
 
 
