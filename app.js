@@ -31,19 +31,19 @@ def();
 
 const PORT = process.env.PORT;
 
-const db = new DBAdapter(DBType);
-db.deleteInactiveUsers();
+// const db = new DBAdapter(DBType);
+// db.deleteInactiveUsers();
 
-// nodeCron.schedule(
-//   `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
-//   () => {
-//     const db = new DBAdapter(DBType);
+nodeCron.schedule(
+  `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+  () => {
+    const db = new DBAdapter(DBType);
 
-//     console.log("Start scheduled");
+    console.log("Start scheduled");
 
-//     db.deleteInactiveUsers();
-//   },
-// );
+    db.deleteInactiveUsers();
+  },
+);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

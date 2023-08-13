@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/.profile
+
 
 # Install node.js & npm
 cd ~
@@ -12,6 +12,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.bashrc
         sudo nvm install --lts
+        
         echo "Node.js installed successfully."
     fi
 else
@@ -19,11 +20,13 @@ else
 fi
 
 
+export PATH="$PATH:/.nvm/versions/node/v18.17.1/bin"
+
 # clone project
 git clone https://github.com/mmdzov/luIP-marzban.git
 
 # Install node_modules
-cd ./luIP-marzban
+cd luIP-marzban
 sudo npm install
 
 # create .env file
