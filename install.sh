@@ -11,7 +11,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         echo "Node.js is not installed. Installing..."
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.bashrc
-        sudo nvm install --lts
+        sudo nvm install v18.17.1
         
         echo "Node.js installed successfully."
     fi
@@ -20,7 +20,7 @@ else
 fi
 
 
-export PATH="$PATH:/.nvm/versions/node/v18.17.1/bin"
+export PATH="$PATH:/root/.nvm/versions/node/v18.17.1/bin"
 
 # clone project
 git clone https://github.com/mmdzov/luIP-marzban.git
