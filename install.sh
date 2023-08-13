@@ -1,4 +1,5 @@
 #!/bin/bash
+source ~/.profile
 
 # Install node.js & npm
 cd ~
@@ -10,7 +11,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         echo "Node.js is not installed. Installing..."
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.bashrc
-        nvm install node
+        sudo nvm install --lts
         echo "Node.js installed successfully."
     fi
 else
@@ -23,7 +24,7 @@ git clone https://github.com/mmdzov/luIP-marzban.git
 
 # Install node_modules
 cd ./luIP-marzban
-npm install
+sudo npm install
 
 # create .env file
 cp env.example .env
