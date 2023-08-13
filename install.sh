@@ -3,35 +3,47 @@
 # Install node.js & npm
 cd ~
 
-# if [ -f /etc/os-release ]; then
-#     DISTRO=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-# else
-#     echo "The operating system is not supported"
-#     exit 1
-# fi
+if ! command -v node &> /dev/null; then
 
-# if ! command -v node &> /dev/null; then
-#     if [ "$DISTRO" == "centos" ] || [ "$DISTRO" == "UBUNTU" ] || [ "$DISTRO" == "fedora" ]; then
-#         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-#         source ~/.bashrc
-#         nvm install --lts
+    if command -v lsb_release &> /dev/null; then
+        distro=$(lsb_release -si)
+    elif [ -f /etc/os-release ]; then
+        distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+    else
+        echo "The operating system is not supported"
+        exit 1
+    fi
 
-#     else
-#         echo "The operating system is not supported"
-#         exit 1
-#     fi
+    case "$distro" in
+        ubuntu)
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+            ;;
+        centos | fedora)
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+            ;;
+        *)
+            echo "The operating system is not supported"
+            exit 1
+            ;;
+    esac
 
-#     echo "Node.js has been successfully installed."
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-# else
-#     echo "node.js is installed on your system. Current version: $(node --version)"
-# fi
+    nvm install --lts
+
+    echo "Node.js has been successfully installed."
+
+else
+    echo "Node.js is already installed. Current version: $(node --version)"
+fi
+
 
 # clone project
 git clone https://github.com/mmdzov/luIP-marzban.git
 
 # Install node_modules
-cd luIP-marzban
+cd ./luIP-marzban
 npm install
 
 # create .env file
@@ -76,7 +88,6 @@ function install_iptables() {
 }
 
 if ! check_iptables; then
-  echo "Install iptables"
   install_iptables
 fi
 
