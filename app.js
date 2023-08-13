@@ -39,8 +39,6 @@ nodeCron.schedule(
   () => {
     const db = new DBAdapter(DBType);
 
-    console.log("Start scheduled");
-
     db.deleteInactiveUsers();
   },
 );
