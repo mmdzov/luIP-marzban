@@ -29,7 +29,7 @@ def();
   ws.logs();
 })();
 
-const PORT = process.env.PORT;
+const PORT = process.env?.PORT;
 
 // const db = new DBAdapter(DBType);
 // db.deleteInactiveUsers();
