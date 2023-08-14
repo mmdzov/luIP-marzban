@@ -87,7 +87,7 @@ In the example below, email1 is the proxy name and 2 represents the maximum numb
   ]
 ```
 
-## Permission to use ipban.sh
+## Permission to use ipban.sh && ipunban.sh
 In order for the file to work, permission must be obtained to use it
 ```bash
   # Open the project folder, then execute the follow command
