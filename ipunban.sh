@@ -19,8 +19,8 @@ function check_ip() {
   fi
 }
 
-source ./ipban.sh
+local_blocked_ips=("${!blocked_ips[@]}")
 
-for ip in "${!blocked_ips[@]}"; do
+for ip in "${local_blocked_ips[@]}"; do
   check_ip $ip
 done
