@@ -188,7 +188,15 @@ class IPGuard {
 
     //
     if (data.ips.length >= maxAllowConnection) {
-      this.ban({ ip });
+      console.log(
+        "should to ban ip",
+        data,
+        indexOfIp,
+        maxAllowConnection,
+        data.ips.length,
+      );
+
+      // this.ban({ ip });
 
       return;
     }
