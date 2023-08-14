@@ -26,6 +26,10 @@ class DBInterface {
   deleteInactiveUsers() {
     throw new Error("This method must be implemented in the class");
   }
+
+  deleteLastIp(email) {
+    throw new Error("This method must be implemented in the class");
+  }
 }
 
 class LuIPInterface {

@@ -73,10 +73,17 @@ class DBAdapter {
   /**
    * @description delete inactive users from database record
    * @returns {void}
-   */  
+   */
   deleteInactiveUsers() {
-    return this.database.deleteInactiveUsers()
+    return this.database.deleteInactiveUsers();
+  }
 
+  /**
+   * @param {string} email
+   * @returns {void}
+   */
+  deleteLastIp(email) {
+    return this.database.deleteLastIp(email);
   }
 }
 

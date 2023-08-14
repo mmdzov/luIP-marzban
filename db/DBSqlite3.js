@@ -27,6 +27,7 @@ class DBSqlite3 extends DBInterface {
           } else {
             if (row) {
               row.ips = JSON.parse(row.ips);
+              console.log("Read db:", row);
               resolve(row);
             } else resolve(null);
           }
@@ -42,7 +43,7 @@ class DBSqlite3 extends DBInterface {
           if (err) {
             reject(err);
           } else {
-            console.log(row);
+            // console.log(row);
           }
         });
       });
@@ -51,10 +52,15 @@ class DBSqlite3 extends DBInterface {
 
   addUser(data) {
     db.serialize(() => {
-      db.run("INSERT INTO users (email, ips) VALUES (?, ?)", [
-        data.email,
-        JSON.stringify(data.ips),
-      ]);
+      db.run(
+        "INSERT INTO users (email, ips) VALUES (?, ?)",
+        [data.email, JSON.stringify(data.ips)],
+        (err, res) => {
+          if (err) {
+            throw new Error(err);
+          }
+        },
+      );
     });
   }
 
@@ -152,6 +158,33 @@ class DBSqlite3 extends DBInterface {
     });
   }
 
+  deleteLastIp(email) {
+    db.serialize(() => {
+      db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+        if (err) throw new Error(err);
+        else {
+          if (!row) return;
+
+          const ips = JSON.parse(row.ips);
+
+          ips.pop();
+
+          db.run(
+            'UPDATE users SET ips = JSON_REPLACE(ips, "$", ?) WHERE email = ?',
+            [JSON.stringify(ips), email],
+            (updateErr, updateRow) => {
+              if (updateErr) {
+                throw new Error(updateErr);
+              } else {
+                // console.log("Ip Successfully Added");
+              }
+            },
+          );
+        }
+      });
+    });
+  }
+
   deleteInactiveUsers() {
     const currentTime = new Date().getTime();
     const fewMinutesAgo = new Date(
@@ -178,7 +211,7 @@ class DBSqlite3 extends DBInterface {
               return idDate > fewMinutesAgo;
             });
 
-            console.log("updateIds",updatedIds);
+            console.log("updateIds", updatedIds);
 
             db.run(
               `UPDATE users SET ips = ? WHERE email = ?`,

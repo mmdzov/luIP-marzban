@@ -54,6 +54,7 @@ class Ws {
               port: item.port,
               date: new Date().toISOString().toString(),
             }),
+          () => this.db.deleteLastIp(item.email),
         );
       }
     });

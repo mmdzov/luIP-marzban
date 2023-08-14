@@ -179,13 +179,16 @@ class IPGuard {
 
     const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
 
-    if (
-      indexOfIp !== -1 &&
-      data.ips.length >= maxAllowConnection &&
-      !data.ips[indexOfIp]?.first
-    ) {
-      console.log("should ban ip. Full data:", data)
-      // this.ban({ ip });
+    const limited = data.ips.length > maxAllowConnection;
+
+    // Remove last user from db
+    if (indexOfIp !== -1 && limited) {
+      return callback[2]();
+    }
+
+    //
+    if (data.ips.length >= maxAllowConnection) {
+      this.ban({ ip });
 
       return;
     }
