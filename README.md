@@ -105,3 +105,8 @@ After configuring the project, run it
   npm start
 
 ```
+
+### Things that need to be done
+
+- [ ] Api ( with token )
+- [ ] A bash script to summarize installation and configuration
