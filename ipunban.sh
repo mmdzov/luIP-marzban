@@ -2,6 +2,8 @@
 
 declare -A blocked_ips
 
+source ./ipban.sh
+
 function check_ip() {
   local ip=$1
   local current_time=$(date +%s)
