@@ -70,6 +70,8 @@ If you don't have node.js installed on your server, install it with nvm
 | :-------- | :------------------------- |
 | `FETCH_INTERVAL_LOGS_WS` | Based on this, websocket logs are checked every x seconds to track traffic. e.g: 1 |
 | `CHECK_INACTIVE_USERS_DURATION` | It is checked every x minutes, users whose last update was x minutes ago or more are disabled. e.g: 5 |
+| `CHECK_IPS_FOR_UNBAN_USERS` | Every x minutes it checks all ips, if they are in prison for more than the time specified in BAN_TIME, they will be unbanned. e.g: 1 |
+| `SSH_PORT` | Enter your ssh port in this section. 22 is set by default |
 
 
 ## users.json 
