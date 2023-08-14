@@ -92,6 +92,7 @@ In order for the file to work, permission must be obtained to use it
 ```bash
   # Open the project folder, then execute the follow command
   chmod +x ./ipban.sh
+  chmod +x ./ipunban.sh
 ```
 
 

@@ -5,6 +5,7 @@ const def = require("./def");
 const express = require("express");
 const nodeCron = require("node-cron");
 const { DBAdapter } = require("./db/Adapter");
+const { exec } = require("child_process");
 require("dotenv").config();
 
 const app = express();
@@ -31,9 +32,6 @@ def();
 
 const PORT = process.env?.PORT;
 
-// const db = new DBAdapter(DBType);
-// db.deleteInactiveUsers();
-
 nodeCron.schedule(
   `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
   () => {
@@ -42,6 +40,20 @@ nodeCron.schedule(
     db.deleteInactiveUsers();
   },
 );
+
+nodeCron.schedule(`*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`, () => {
+  exec("bash ./ipunban.sh", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing ipunban.sh: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`ipunban.sh stderr: ${stderr}`);
+      return;
+    }
+    console.log(`ipunban.sh stdout: ${stdout}`);
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -6,15 +6,13 @@ function def() {
     join("users.json"),
     JSON.stringify(
       [
-        ["Email1", 1],
-        ["Email2", 2],
+        ["user1", 1],
+        ["user2", 2],
       ],
       0,
       1,
     ),
   );
-
-  // new File().ForceExistsFile("ban.sqlite");
 }
 
 module.exports = def;

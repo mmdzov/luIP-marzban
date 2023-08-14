@@ -1,9 +1,14 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
 
-function banIP(ip, durationMinutes) {
+function banIP(ip) {
   const scriptPath = "./ipban.sh";
-  const args = [scriptPath, ip, `${durationMinutes}`];
+  const args = [
+    scriptPath,
+    ip,
+    `${process.env.BAN_TIME}`,
+    `${process.env.SSH_PORT}`,
+  ];
 
   const childProcess = spawn("bash", args);
 
@@ -179,7 +184,8 @@ class IPGuard {
       data.ips.length >= maxAllowConnection &&
       !data.ips[indexOfIp]?.first
     ) {
-      this.ban({ ip });
+      console.log("should ban ip. Full data:", data)
+      // this.ban({ ip });
 
       return;
     }
@@ -191,7 +197,7 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    banIP(`${params.ip}`, process.env.BAN_TIME);
+    banIP(`${params.ip}`);
     // console.log("ban", params);
   }
 }
