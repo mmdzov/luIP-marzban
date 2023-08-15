@@ -107,4 +107,5 @@ After configuring the project, run it
 ### Things that need to be done
 
 - [ ] Api ( with token )
+- [ ] Marzban node
 - [ ] A bash script to summarize installation and configuration
