@@ -1,3 +1,7 @@
+# luIP-marzban
+Limit users in each proxy configuration
+
+
 # Introduction
 
 - [Requirements](https://github.com/mmdzov/luIP-marzban/tree/main#installation)
@@ -9,8 +13,6 @@
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 
-# luIP-marzban
-Limit users in each proxy configuration
 
 
 ## Installation
