@@ -1,9 +1,9 @@
 #!/bin/bash
 
-declare -A blocked_ips
-
 BLOCK_TIME_MINUTES=$2
 BLOCK_TIME_SECONDS=$((BLOCK_TIME_MINUTES * 60))
+
+CSV_FILE="blocked_ips.csv"
 
 function block_ip() {
   local ip=$1
@@ -13,7 +13,7 @@ function block_ip() {
     iptables -D INPUT -s $ip -j DROP
   fi
 
-  blocked_ips[$ip]=$end_time
+  echo "$ip,$end_time" >> "$CSV_FILE"
 
   iptables -A INPUT -s $ip -j DROP
 }

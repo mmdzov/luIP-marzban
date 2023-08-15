@@ -13,6 +13,8 @@ function def() {
       1,
     ),
   );
+
+  new File().ForceExistsFile(join("blocked_ips.csv"), "");
 }
 
 module.exports = def;
