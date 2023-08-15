@@ -2,6 +2,7 @@
 *.sqlite
 
 users.json
+blocked_ips.csv
 
 # Logs
 logs
