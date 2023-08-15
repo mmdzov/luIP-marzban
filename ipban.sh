@@ -13,7 +13,9 @@ function block_ip() {
     iptables -D INPUT -s $ip -j DROP
   fi
 
-  echo "$ip,$end_time" >> "$CSV_FILE"
+  if ! awk -F',' -v ip="$ip" '$1 == ip' "$CSV_FILE" | grep -q .; then
+    echo "$ip,$end_time" >> "$CSV_FILE"
+  fi
 
   iptables -A INPUT -s $ip -j DROP
 }
