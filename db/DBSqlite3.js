@@ -27,7 +27,7 @@ class DBSqlite3 extends DBInterface {
           } else {
             if (row) {
               row.ips = JSON.parse(row.ips);
-              console.log("Read db:", row);
+              // console.log("Read db:", row);
               resolve(row);
             } else resolve(null);
           }
