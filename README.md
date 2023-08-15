@@ -15,10 +15,13 @@ If you don't have node.js installed on your server, install it with nvm
 ```
 
 
-#### Install iptables
+#### Install other requirements
 
 ```bash
   sudo apt-get install -y iptables
+  sudo apt-get install gawk
+  sudo apt-get install csvtool
+  npm install pm2 -g
 ```
 
 
@@ -29,11 +32,6 @@ If you don't have node.js installed on your server, install it with nvm
   cp .env.example .env
   npm install
 ```
-#### Install PM2
-```bash
-  npm install pm2 -g
-```
-
 
 ## luIP-marzban/.env file
 ```bash
