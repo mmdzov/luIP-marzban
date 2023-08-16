@@ -2,8 +2,9 @@
 Limit users in each proxy configuration
 
 
-# Introduction
+## Introduction
 
+- [Description](https://github.com/mmdzov/luIP-marzban/tree/main#description)
 - [Requirements](https://github.com/mmdzov/luIP-marzban/tree/main#installation)
   - [Install node.js](https://github.com/mmdzov/luIP-marzban/tree/main#install-nodejs)
   - [Install iptables / gawk / csvtool](https://github.com/mmdzov/luIP-marzban/tree/main#install-other-requirements)
@@ -13,6 +14,20 @@ Limit users in each proxy configuration
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 
+
+## Description 
+
+The luIP-marzban project was created and developed based on node.js and uses the marzban api.
+
+luip stores connected and authorized users in the sqlite database. Saving and updating users is done through websocket where traffic is intercepted by luIP-marzban and data including IPs are received from there.
+
+Users are updated through websocket and with a schedule based on the `FETCH_INTERVAL_LOGS_WS` variable located in `.env`
+
+Every x minutes, it is checked based on the `CHECK_INACTIVE_USERS_DURATION` variable: if the last update of a connected IP was y minutes, based on the `CHECK_INACTIVE_USERS_DURATION` variable, the user's IP will be removed from the connected list. And this possibility is provided so that space remains empty and other clients are allowed to connect
+
+IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands), then incoming traffic on said IP is blocked for the duration specified in the `BAN_TIME` variable.
+
+Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
 
 
 ## Installation
