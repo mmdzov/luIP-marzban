@@ -29,6 +29,7 @@ IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/
 
 Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
 
+### Note: This project does not currently support marzban node, but this support will be provided in the next updates.
 
 ## Installation
 
