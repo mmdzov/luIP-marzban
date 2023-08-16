@@ -135,7 +135,7 @@ After configuring the project, run it
 
 ## Stop luIP with kill process
 
-You can run the command below, but whenever you want, you can go to the project path (cd /luIP-marzban) and type npm start, luIP will run again.
+You can run the command below, but whenever you want, you can go to the project path [ `cd /luIP-marzban` ] and type `npm start`, luIP will run again.
 
 ```bash
 pm2 kill
