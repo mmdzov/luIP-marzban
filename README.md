@@ -4,7 +4,7 @@ Limit users in each proxy configuration
 
 ## Introduction
 
-- [Description](https://github.com/mmdzov/luIP-marzban/tree/main#description)
+- [Mechanism](https://github.com/mmdzov/luIP-marzban/tree/main#mechanism)
 - [Requirements](https://github.com/mmdzov/luIP-marzban/tree/main#installation)
   - [Install node.js](https://github.com/mmdzov/luIP-marzban/tree/main#install-nodejs)
   - [Install iptables / gawk / csvtool](https://github.com/mmdzov/luIP-marzban/tree/main#install-other-requirements)
@@ -15,7 +15,7 @@ Limit users in each proxy configuration
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 
 
-## Description 
+## Mechanism
 
 The luIP-marzban project was created and developed based on node.js and uses the marzban api.
 
