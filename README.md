@@ -133,6 +133,34 @@ After configuring the project, run it
 
 ```
 
+## Stop luIP with kill process
+
+You can run the command below, but whenever you want, you can go to the project path [ `cd /luIP-marzban` ] and type `npm start`, luIP will run again.
+
+```bash
+pm2 kill
+pm2 flush # Deletes the log
+```
+
+## Checking blocked IPs
+
+```bash
+iptables -L -n
+```
+
+## Unblock all IPs
+First, empty blocked_ips.csv, then run the following command
+```bash
+iptables -F
+```
+
+## Uninstall
+
+```bash
+pm2 kill
+sudo rm -rf /luIP-marzban
+```
+
 ### Things that need to be done
 
 - [ ] Api ( with token )
