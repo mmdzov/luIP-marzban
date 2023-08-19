@@ -94,6 +94,36 @@ class Model {
       status: 1,
     });
   }
+
+  /**
+   * @typedef {Object} ApiAddDataType
+   * @property {string} email
+   *
+   * @param {ApiAddDataType} data
+   */
+  delete(data) {
+    let file = new File().GetCsvFile(this.usersCsvPath).toString();
+
+    let emails = file.split("\r\n").filter((item) => item.trim());
+
+    if (!file.includes(data.email))
+      return response({
+        error: {
+          type: "NOT_FOUND",
+          reason: "This email does not exist",
+        },
+      });
+
+    emails = emails.filter((item) => item.split(",")[0] !== data.email);
+
+    emails = emails.join("\r\n");
+
+    fs.writeFileSync(this.usersCsvPath, emails);
+
+    return response({
+      status: 1,
+    });
+  }
 }
 
 module.exports = Model;
