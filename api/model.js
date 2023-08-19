@@ -124,6 +124,14 @@ class Model {
       status: 1,
     });
   }
+
+  clear() {
+    fs.writeFileSync(this.usersCsvPath, "");
+
+    return response({
+      status: 1,
+    });
+  }
 }
 
 module.exports = Model;

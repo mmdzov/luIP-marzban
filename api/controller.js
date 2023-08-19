@@ -26,9 +26,15 @@ router.post("/update", AuthApiKey, validator.add, (req, res) => {
   return res.json(result);
 });
 
-// Send your proxy email data in json format to be updated
+// Send your proxy email data in json format to be delete
 router.get("/delete/:email", AuthApiKey, (req, res) => {
   const result = model.delete(req.params);
+
+  return res.json(result);
+});
+
+router.get("/clear", AuthApiKey, (req, res) => {
+  const result = model.clear();
 
   return res.json(result);
 });
