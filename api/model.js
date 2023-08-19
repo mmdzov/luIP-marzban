@@ -55,6 +55,45 @@ class Model {
       status: 1,
     });
   }
+
+  /**
+   * @typedef {Object} ApiAddDataType
+   * @property {string} email
+   * @property {string} limit
+   *
+   * @param {ApiAddDataType} data
+   */
+
+  update(data) {
+    let file = new File().GetCsvFile(this.usersCsvPath).toString();
+
+    let emails = file
+      .split("\r\n")
+      .filter((item) => item.trim())
+      .map((item) => [item.split(",")[0], item.split(",")[1]]);
+
+    if (!file.includes(data.email))
+      return response({
+        error: {
+          type: "NOT_FOUND",
+          reason: "This email does not exist",
+        },
+      });
+
+    const index = emails.findIndex((item) => item[0] === data.email);
+
+    emails[index][1] = data.limit;
+
+    emails = emails.map((item) => `${item[0]},${item[1]}`);
+
+    emails = emails.join("\r\n");
+
+    fs.writeFileSync(this.usersCsvPath, emails);
+
+    return response({
+      status: 1,
+    });
+  }
 }
 
 module.exports = Model;

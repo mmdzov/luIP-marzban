@@ -19,4 +19,11 @@ router.post("/add", AuthApiKey, validator.add, (req, res) => {
   return res.json(result);
 });
 
+// Send your proxy email and limit data in json format to be updated
+router.post("/update", AuthApiKey, validator.add, (req, res) => {
+  const result = model.update(req.body);
+
+  return res.json(result);
+});
+
 module.exports = router;

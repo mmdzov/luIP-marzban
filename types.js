@@ -47,7 +47,7 @@
  */
 
 /**
- * @typedef {"INVALID" | "NOT_MATCH" | "AUTH" | "DUPLICATE"} ApiErrorTypes
+ * @typedef {"INVALID" | "NOT_MATCH" | "AUTH" | "DUPLICATE" | "NOT_FOUND"} ApiErrorTypes
  */
 
 /**
