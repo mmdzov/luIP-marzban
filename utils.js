@@ -117,9 +117,9 @@ class Server {
   /**
    * @param {string} address address with port. Like: example.com:443
    * @param {boolean} api Return address with api
-   * @returns {Promise<string>}
+   * @returns {string}
    */
-  async CleanAddress(address, api = true, showHttp = true) {
+  CleanAddress(address, api = true, showHttp = true) {
     const [ADDRESS, port] = address.split(":");
 
     let _address = address;

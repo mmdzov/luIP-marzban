@@ -76,10 +76,10 @@ class Api {
 
   /**
    * @description Creates an instance to communicate with the marzban api
-   * @returns {Promise}
+   * @returns {void}
    */
-  async create() {
-    const url = await new Server().CleanAddress(
+  create() {
+    const url = new Server().CleanAddress(
       `${process.env.ADDRESS}:${process.env.PORT_ADDRESS}`,
     );
 

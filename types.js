@@ -1,3 +1,5 @@
+// Globally
+
 /**
  * @typedef {Object} IPSDataType
  * @property {string} ip
@@ -34,4 +36,12 @@
 /**
  * @typedef {Object} BanIpConfigAddType
  * @property {string} ip
+ */
+
+// API
+
+/**
+ * @typedef {Object} ApiSetTokenType
+ * @property {string} username
+ * @property {string} password
  */
