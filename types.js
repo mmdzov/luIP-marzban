@@ -45,3 +45,20 @@
  * @property {string} username
  * @property {string} password
  */
+
+/**
+ * @typedef {"INVALID" | "NOT_MATCH" | "AUTH" | "DUPLICATE"} ApiErrorTypes
+ */
+
+/**
+ * @typedef {Object} ApiResponseErrorType
+ * @property {ApiErrorTypes} type
+ * @property {string} reason
+ */
+
+/**
+ * @typedef {Object} ApiResponseType
+ * @property {Object | null} data
+ * @property {ApiResponseErrorType} error
+ * @property {0|1} status
+ */

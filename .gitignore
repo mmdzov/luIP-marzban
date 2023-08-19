@@ -3,6 +3,7 @@
 
 users.json
 blocked_ips.csv
+users.csv
 
 # Logs
 logs

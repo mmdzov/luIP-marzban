@@ -145,10 +145,16 @@ class File {
     return;
   }
 
-  GetFilesJson(path) {
+  GetJsonFile(path) {
     this.ForceExistsFile(path);
 
     return JSON.parse(fs.readFileSync(path));
+  }
+
+  GetCsvFile(path) {
+    this.ForceExistsFile(path, "");
+
+    return fs.readFileSync(path);
   }
 }
 
@@ -174,7 +180,7 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new File().GetFilesJson("users.json");
+    const users = new File().GetJsonFile("users.json");
     const user = users.filter((item) => item[0] === data.email)[0] || null;
 
     const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
