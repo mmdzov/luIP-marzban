@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mmdzov/luIP-marzban#readme",
   "dependencies": {
+    "@grammyjs/runner": "^2.0.3",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "crypto-js": "^4.1.1",
@@ -29,6 +30,7 @@
     "node-cron": "^3.0.2",
     "node-html-parser": "^6.1.5",
     "pm2": "^5.3.0",
+    "socks-proxy-agent": "^8.0.1",
     "sqlite3": "^5.1.6",
     "ws": "^8.13.0"
   },

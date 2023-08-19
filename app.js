@@ -9,6 +9,7 @@ const { exec } = require("child_process");
 const { join } = require("path");
 const router = require("./api/controller");
 const bodyParser = require("body-parser");
+const tg = require("./telegram/tg");
 require("dotenv").config();
 
 const app = express();
@@ -18,6 +19,8 @@ const DBType = new DBSqlite3();
 def();
 
 (async () => {
+  tg();
+
   api.create();
 
   await api.token();
@@ -33,28 +36,31 @@ def();
   ws.logs();
 })();
 
-// nodeCron.schedule(
-//   `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
-//   () => {
-//     const db = new DBAdapter(DBType);
-
-//     db.deleteInactiveUsers();
-//   },
-// );
-
-// nodeCron.schedule(`*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`, () => {
-//   exec("bash ./ipunban.sh", (error, stdout, stderr) => {
-//     if (error) {
-//       console.error(`Error executing ipunban.sh: ${error.message}`);
-//       return;
-//     }
-//     if (stderr) {
-//       console.error(`ipunban.sh stderr: ${stderr}`);
-//       return;
-//     }
-//     console.log(`ipunban.sh stdout: ${stdout}`);
-//   });
-// });
+if (process.env.NODE_ENV === "production") {
+  nodeCron.schedule(
+    `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+    () => {
+      const db = new DBAdapter(DBType);
+      db.deleteInactiveUsers();
+    },
+  );
+  nodeCron.schedule(
+    `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
+    () => {
+      exec("bash ./ipunban.sh", (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing ipunban.sh: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`ipunban.sh stderr: ${stderr}`);
+          return;
+        }
+        console.log(`ipunban.sh stdout: ${stdout}`);
+      });
+    },
+  );
+}
 
 // Api server
 if (Boolean(process.env?.API_ENABLE) === true) {

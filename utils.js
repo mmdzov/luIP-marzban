@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
 
-function banIP(ip) {
+function banIP(ip, email) {
   const scriptPath = "./ipban.sh";
   const args = [
     scriptPath,
@@ -14,6 +14,14 @@ function banIP(ip) {
 
   childProcess.on("close", (code) => {
     if (code === 0) {
+      if (Boolean(process.env.TG_ENABLE) === true)
+        globalThis.bot.api.sendMessage(
+          process.env.TG_ADMIN,
+          `${email}: IP ${ip} banned successfully.
+Duration: ${process.env.BAN_TIME} minutes
+          `,
+        );
+
       console.log(`IP ${ip} banned successfully.`);
     } else {
       console.error(`Failed to ban IP ${ip}.`);
@@ -194,7 +202,7 @@ class IPGuard {
 
     //
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
-      this.ban({ ip });
+      this.ban({ ip, email: data.email });
 
       return;
     }
@@ -206,7 +214,7 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    banIP(`${params.ip}`);
+    banIP(`${params.ip}`, params.email);
     // console.log("ban", params);
   }
 }
