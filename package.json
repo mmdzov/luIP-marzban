@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/mmdzov/luIP-marzban#readme",
   "dependencies": {
+    "@grammyjs/files": "^1.0.4",
+    "@grammyjs/menu": "^1.2.1",
     "@grammyjs/runner": "^2.0.3",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",

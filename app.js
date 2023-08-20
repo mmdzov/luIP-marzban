@@ -36,7 +36,7 @@ def();
   ws.logs();
 })();
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV.includes("production")) {
   nodeCron.schedule(
     `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
     () => {
