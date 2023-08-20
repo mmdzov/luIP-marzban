@@ -37,7 +37,9 @@ class Model {
   add(data) {
     let file = new File().GetCsvFile(this.usersCsvPath).toString();
 
-    if (file.includes(data.email))
+    file = file.split("\r\n").map((item) => item.split(","));
+
+    if (file.some((item) => item[0] === data.email) === true)
       return response({
         error: {
           type: "DUPLICATE",
