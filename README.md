@@ -13,7 +13,7 @@ Limit users in each proxy configuration
 - [users.json](https://github.com/mmdzov/luIP-marzban/tree/main#usersjson)
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
-- [API Reference]([https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project](https://github.com/mmdzov/luIP-marzban/tree/dev#api-reference))
+- [API Reference](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 
 
 ## Mechanism
