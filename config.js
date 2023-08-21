@@ -23,6 +23,7 @@ class Ws {
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
 
+    // retry to get token
     ws.on("unexpected-response", async (error, response) => {
       const token = await params.api.token();
 
