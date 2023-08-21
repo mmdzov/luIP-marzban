@@ -99,6 +99,13 @@ If you don't have node.js installed on your server, install it with nvm
 | `CHECK_IPS_FOR_UNBAN_USERS` | Every x minutes it checks all ips, if they are in prison for more than the time specified in `BAN_TIME`, they will be unbanned. e.g: 1 |
 | `SSH_PORT` | Enter your ssh port in this section. 22 is set by default |
 
+#### Telegram bot configuration
+
+| Parameter | Description                |
+| :-------- | :------------------------- |
+| `TG_ENABLE` | If you want to use Telegram bot for logs, set this value to `true` |
+| `TG_TOKEN` | The bot token you received from @botfather |
+| `TG_ADMIN` | Your user ID that you received from @userinfobot |
 
 ## users.json 
 You can set specific users in the users.json file
