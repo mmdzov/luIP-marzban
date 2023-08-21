@@ -11,9 +11,11 @@ class Ws {
    * @param {WebSocketConfigType} params
    */
   constructor(params) {
-    const url = `${process.env.SSL ? "wss" : "ws"}://${
+    let patch = params.node ? `node/${params.node}` : "core";
+
+    const url = `${Boolean(process.env.SSL) === true ? "wss" : "ws"}://${
       params.url
-    }/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
+    }/api/${patch}/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
       params.accessToken
     }`;
     const db = new DBAdapter(params.DB);
@@ -112,6 +114,22 @@ class Api {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  async getNodes() {
+    let nodes = [];
+
+    try {
+      const { data } = await this.axios.get("/nodes");
+
+      nodes = data
+        .filter((item) => item.status === "connected")
+        .map((item) => item.id);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return nodes;
   }
 }
 

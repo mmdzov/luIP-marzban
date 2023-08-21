@@ -31,9 +31,24 @@ def();
     false,
   );
 
+  const nodes = await api.getNodes();
+
   const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType });
 
   ws.logs();
+
+  for (let i in nodes) {
+    const node = nodes[i];
+
+    const ws = new Ws({
+      url,
+      accessToken: api.accessToken,
+      DB: DBType,
+      node,
+    });
+
+    ws.logs();
+  }
 })();
 
 if (process.env.NODE_ENV.includes("production")) {
