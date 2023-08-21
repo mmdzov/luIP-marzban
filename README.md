@@ -128,6 +128,7 @@ In order for the file to work, permission must be obtained to use it
   # Open the project folder, then execute the follow command
   chmod +x ./ipban.sh
   chmod +x ./ipunban.sh
+  chmod +x ./restore_banned_ips.sh
 ```
 
 
