@@ -12,14 +12,25 @@ class Ws {
    */
   constructor(params) {
     let patch = params.node ? `node/${params.node}` : "core";
+    this.access_token = params.accessToken;
+    this.params = params;
 
-    const url = `${Boolean(process.env.SSL) === true ? "wss" : "ws"}://${
+    const url = `${process.env.SSL === "true" ? "wss" : "ws"}://${
       params.url
     }/api/${patch}/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
-      params.accessToken
+      this.access_token
     }`;
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
+
+    ws.on("unexpected-response", async (error, response) => {
+      const token = await params.api.token();
+
+      const _ws = new Ws({ ...params, accessToken: token });
+
+      _ws.logs();
+    });
+
     const user = new User();
     const ipGuard = new IPGuard(new DBSqlite3());
 
@@ -92,6 +103,19 @@ class Api {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
+
+    this.axios.interceptors.response.use(
+      (value) => value,
+      async (error) => {
+        if (
+          error?.response?.data?.detail === "Could not validate credentials"
+        ) {
+          await this.token();
+        }
+
+        return error;
+      },
+    );
   }
 
   /**
@@ -109,8 +133,11 @@ class Api {
       });
 
       this.accessToken = data.access_token;
+      this.axios.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
       this.accessTokenType = data.token_type;
       this.accessTokenExpireAt = new Date() + 1000 * 60 * 60;
+
+      return data.access_token;
     } catch (e) {
       console.error(e);
     }
@@ -121,6 +148,8 @@ class Api {
 
     try {
       const { data } = await this.axios.get("/nodes");
+
+      if (!data) return nodes;
 
       nodes = data
         .filter((item) => item.status === "connected")

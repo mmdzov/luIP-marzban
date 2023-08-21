@@ -25,6 +25,7 @@
  * @property {string} accessToken
  * @property {object} DB
  * @property {string} node
+ * @property {Object} api
  */
 
 /**

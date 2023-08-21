@@ -33,7 +33,7 @@ def();
 
   const nodes = await api.getNodes();
 
-  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType });
+  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType, api });
 
   ws.logs();
 
@@ -42,9 +42,10 @@ def();
 
     const ws = new Ws({
       url,
-      accessToken: api.accessToken,
+      accessToken: `${api.accessToken}d`,
       DB: DBType,
       node,
+      api,
     });
 
     ws.logs();
@@ -78,7 +79,7 @@ if (process.env.NODE_ENV.includes("production")) {
 }
 
 // Api server
-if (Boolean(process.env?.API_ENABLE) === true) {
+if (process.env?.API_ENABLE === "true") {
   const PORT = process.env?.API_PORT;
 
   let address = new Server().CleanAddress(

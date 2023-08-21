@@ -8,7 +8,7 @@ const { join } = require("path");
 const { File } = require("../utils");
 
 function tg() {
-  if (Boolean(process.env.TG_ENABLE) === false) return;
+  if (process.env.TG_ENABLE === "false") return;
 
   let bot = null;
 

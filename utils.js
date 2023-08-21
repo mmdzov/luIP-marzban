@@ -14,7 +14,7 @@ function banIP(ip, email) {
 
   childProcess.on("close", (code) => {
     if (code === 0) {
-      if (Boolean(process.env.TG_ENABLE) === true)
+      if (process.env.TG_ENABLE === "true")
         globalThis.bot.api.sendMessage(
           process.env.TG_ADMIN,
           `${email}: IP ${ip} banned successfully.
@@ -195,7 +195,7 @@ class IPGuard {
       usersCsv = usersCsv.split("\r\n").map((item) => item.split(","));
     }
 
-    if (usersCsv.some((item) => item[0] === data.email) === false)
+    if (usersCsv && usersCsv.some((item) => item[0] === data.email) === false)
       usersCsv = null;
 
     let userCsv = null;
