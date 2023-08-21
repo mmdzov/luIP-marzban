@@ -173,7 +173,7 @@ sudo rm -rf /luIP-marzban
 
 We get to know the following environment variables that are located in the .env file by default.
 
-##### When you use the api, the data will be stored in a file called users.csv, and this file has a higher priority in reading than MAX_ALLOW_USERS and users.json, just as users.json has a higher priority than MAX_ALLOW_USERS.
+##### When you use the api, the data will be stored in a file called `users.csv`, and this file has a higher priority in reading than `MAX_ALLOW_USERS` and `users.json`, just as `users.json` has a higher priority than `MAX_ALLOW_USERS`.
 
 
 | Parameter | Description                |
