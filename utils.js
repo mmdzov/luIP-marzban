@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
 
-function banIP(ip) {
+function banIP(ip, email) {
   const scriptPath = "./ipban.sh";
   const args = [
     scriptPath,
@@ -14,6 +14,14 @@ function banIP(ip) {
 
   childProcess.on("close", (code) => {
     if (code === 0) {
+      if (process.env.TG_ENABLE === "true")
+        globalThis.bot.api.sendMessage(
+          process.env.TG_ADMIN,
+          `${email}: IP ${ip} banned successfully.
+Duration: ${process.env.BAN_TIME} minutes
+          `,
+        );
+
       console.log(`IP ${ip} banned successfully.`);
     } else {
       console.error(`Failed to ban IP ${ip}.`);
@@ -117,9 +125,9 @@ class Server {
   /**
    * @param {string} address address with port. Like: example.com:443
    * @param {boolean} api Return address with api
-   * @returns {Promise<string>}
+   * @returns {string}
    */
-  async CleanAddress(address, api = true, showHttp = true) {
+  CleanAddress(address, api = true, showHttp = true) {
     const [ADDRESS, port] = address.split(":");
 
     let _address = address;
@@ -145,10 +153,16 @@ class File {
     return;
   }
 
-  GetFilesJson(path) {
+  GetJsonFile(path) {
     this.ForceExistsFile(path);
 
     return JSON.parse(fs.readFileSync(path));
+  }
+
+  GetCsvFile(path) {
+    this.ForceExistsFile(path, "");
+
+    return fs.readFileSync(path);
   }
 }
 
@@ -174,10 +188,27 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new File().GetFilesJson("users.json");
+    const users = new File().GetJsonFile("users.json");
+    let usersCsv = new File().GetCsvFile("users.csv").toString();
+
+    if (usersCsv.trim()) {
+      usersCsv = usersCsv.split("\r\n").map((item) => item.split(","));
+    }
+
+    if (usersCsv && usersCsv.some((item) => item[0] === data.email) === false)
+      usersCsv = null;
+
+    let userCsv = null;
+    if (usersCsv.trim())
+      userCsv = usersCsv.filter((item) => item[0] === data.email)[0] || null;
+
     const user = users.filter((item) => item[0] === data.email)[0] || null;
 
-    const maxAllowConnection = user ? +user[1] : +process.env.MAX_ALLOW_USERS;
+    const maxAllowConnection = userCsv
+      ? +userCsv[1]
+      : user
+      ? +user[1]
+      : +process.env.MAX_ALLOW_USERS;
 
     const limited = data.ips.length > maxAllowConnection;
 
@@ -188,7 +219,7 @@ class IPGuard {
 
     //
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
-      this.ban({ ip });
+      this.ban({ ip, email: data.email });
 
       return;
     }
@@ -200,7 +231,7 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    banIP(`${params.ip}`);
+    banIP(`${params.ip}`, params.email);
     // console.log("ban", params);
   }
 }

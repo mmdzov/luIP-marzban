@@ -1,3 +1,5 @@
+// Globally
+
 /**
  * @typedef {Object} IPSDataType
  * @property {string} ip
@@ -22,6 +24,8 @@
  * @property {string} url
  * @property {string} accessToken
  * @property {object} DB
+ * @property {string} node
+ * @property {Object} api
  */
 
 /**
@@ -34,4 +38,29 @@
 /**
  * @typedef {Object} BanIpConfigAddType
  * @property {string} ip
+ */
+
+// API
+
+/**
+ * @typedef {Object} ApiSetTokenType
+ * @property {string} username
+ * @property {string} password
+ */
+
+/**
+ * @typedef {"INVALID" | "NOT_MATCH" | "AUTH" | "DUPLICATE" | "NOT_FOUND"} ApiErrorTypes
+ */
+
+/**
+ * @typedef {Object} ApiResponseErrorType
+ * @property {ApiErrorTypes} type
+ * @property {string} reason
+ */
+
+/**
+ * @typedef {Object} ApiResponseType
+ * @property {Object | null} data
+ * @property {ApiResponseErrorType} error
+ * @property {0|1} status
  */

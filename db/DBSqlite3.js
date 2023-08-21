@@ -87,7 +87,7 @@ class DBSqlite3 extends DBInterface {
           const indexOfIp = ips.findIndex((item) => item.ip === ipData.ip);
 
           // Get the users.json file
-          const usersJson = new File().GetFilesJson(join("users.json"));
+          const usersJson = new File().GetJsonFile(join("users.json"));
           const indexOfUser = usersJson.findIndex((item) => item[0] === email);
 
           const userJson = usersJson[indexOfUser] || [

@@ -6,6 +6,10 @@ const express = require("express");
 const nodeCron = require("node-cron");
 const { DBAdapter } = require("./db/Adapter");
 const { exec } = require("child_process");
+const { join } = require("path");
+const router = require("./api/controller");
+const bodyParser = require("body-parser");
+const tg = require("./telegram/tg");
 require("dotenv").config();
 
 const app = express();
@@ -15,46 +19,87 @@ const DBType = new DBSqlite3();
 def();
 
 (async () => {
-  await api.create();
+  tg();
+
+  api.create();
 
   await api.token();
 
-  const url = await new Server().CleanAddress(
+  const url = new Server().CleanAddress(
     `${process.env.ADDRESS}:${process.env.PORT_ADDRESS}`,
     false,
     false,
   );
 
-  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType });
+  const nodes = await api.getNodes();
+
+  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType, api });
 
   ws.logs();
+
+  for (let i in nodes) {
+    const node = nodes[i];
+
+    const ws = new Ws({
+      url,
+      accessToken: `${api.accessToken}d`,
+      DB: DBType,
+      node,
+      api,
+    });
+
+    ws.logs();
+  }
 })();
 
-const PORT = process.env?.PORT;
+if (process.env.NODE_ENV.includes("production")) {
+  nodeCron.schedule(
+    `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+    () => {
+      const db = new DBAdapter(DBType);
+      db.deleteInactiveUsers();
+    },
+  );
+  nodeCron.schedule(
+    `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
+    () => {
+      exec("bash ./ipunban.sh", (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing ipunban.sh: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`ipunban.sh stderr: ${stderr}`);
+          return;
+        }
+        console.log(`ipunban.sh stdout: ${stdout}`);
+      });
+    },
+  );
+}
 
-nodeCron.schedule(
-  `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
-  () => {
-    const db = new DBAdapter(DBType);
+// Api server
+if (process.env?.API_ENABLE === "true") {
+  const PORT = process.env?.API_PORT;
 
-    db.deleteInactiveUsers();
-  },
-);
+  let address = new Server().CleanAddress(
+    `${process.env.ADDRESS}:${process.env.API_PORT}`,
+    false,
+    true,
+  );
 
-nodeCron.schedule(`*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`, () => {
-  exec("bash ./ipunban.sh", (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing ipunban.sh: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`ipunban.sh stderr: ${stderr}`);
-      return;
-    }
-    console.log(`ipunban.sh stdout: ${stdout}`);
+  address = `${address}${process.env.API_PATH}`;
+
+  app.use(
+    bodyParser.urlencoded({
+      extended: true,
+    }),
+  );
+  app.use(bodyParser.json());
+
+  app.use(`${process.env.API_PATH}`, router);
+
+  const server = app.listen(PORT, () => {
+    console.log(`Server running: ${address}`);
   });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+}

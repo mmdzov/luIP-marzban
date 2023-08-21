@@ -11,13 +11,27 @@ class Ws {
    * @param {WebSocketConfigType} params
    */
   constructor(params) {
-    const url = `${process.env.SSL ? "wss" : "ws"}://${
+    let patch = params.node ? `node/${params.node}` : "core";
+    this.access_token = params.accessToken;
+    this.params = params;
+
+    const url = `${process.env.SSL === "true" ? "wss" : "ws"}://${
       params.url
-    }/api/core/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
-      params.accessToken
+    }/api/${patch}/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
+      this.access_token
     }`;
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
+
+    // retry to get token
+    ws.on("unexpected-response", async (error, response) => {
+      const token = await params.api.token();
+
+      const _ws = new Ws({ ...params, accessToken: token });
+
+      _ws.logs();
+    });
+
     const user = new User();
     const ipGuard = new IPGuard(new DBSqlite3());
 
@@ -76,10 +90,10 @@ class Api {
 
   /**
    * @description Creates an instance to communicate with the marzban api
-   * @returns {Promise}
+   * @returns {void}
    */
-  async create() {
-    const url = await new Server().CleanAddress(
+  create() {
+    const url = new Server().CleanAddress(
       `${process.env.ADDRESS}:${process.env.PORT_ADDRESS}`,
     );
 
@@ -90,6 +104,19 @@ class Api {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
+
+    this.axios.interceptors.response.use(
+      (value) => value,
+      async (error) => {
+        if (
+          error?.response?.data?.detail === "Could not validate credentials"
+        ) {
+          await this.token();
+        }
+
+        return error;
+      },
+    );
   }
 
   /**
@@ -107,11 +134,32 @@ class Api {
       });
 
       this.accessToken = data.access_token;
+      this.axios.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
       this.accessTokenType = data.token_type;
       this.accessTokenExpireAt = new Date() + 1000 * 60 * 60;
+
+      return data.access_token;
     } catch (e) {
       console.error(e);
     }
+  }
+
+  async getNodes() {
+    let nodes = [];
+
+    try {
+      const { data } = await this.axios.get("/nodes");
+
+      if (!data) return nodes;
+
+      nodes = data
+        .filter((item) => item.status === "connected")
+        .map((item) => item.id);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return nodes;
   }
 }
 

@@ -13,6 +13,7 @@ Limit users in each proxy configuration
 - [users.json](https://github.com/mmdzov/luIP-marzban/tree/main#usersjson)
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
+- [API Reference](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 
 
 ## Mechanism
@@ -28,8 +29,6 @@ Every x minutes, it is checked based on the `CHECK_INACTIVE_USERS_DURATION` vari
 IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands), then incoming traffic on said IP is blocked for the duration specified in the `BAN_TIME` variable.
 
 Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
-
-### Note: This project does not currently support marzban node, but this support will be provided in the next updates.
 
 ## Installation
 
@@ -100,6 +99,13 @@ If you don't have node.js installed on your server, install it with nvm
 | `CHECK_IPS_FOR_UNBAN_USERS` | Every x minutes it checks all ips, if they are in prison for more than the time specified in `BAN_TIME`, they will be unbanned. e.g: 1 |
 | `SSH_PORT` | Enter your ssh port in this section. 22 is set by default |
 
+#### Telegram bot configuration
+
+| Parameter | Description                |
+| :-------- | :------------------------- |
+| `TG_ENABLE` | If you want to use Telegram bot for logs, set this value to `true` |
+| `TG_TOKEN` | The bot token you received from @botfather |
+| `TG_ADMIN` | Your user ID that you received from @userinfobot |
 
 ## users.json 
 You can set specific users in the users.json file
@@ -122,6 +128,7 @@ In order for the file to work, permission must be obtained to use it
   # Open the project folder, then execute the follow command
   chmod +x ./ipban.sh
   chmod +x ./ipunban.sh
+  chmod +x ./restore_banned_ips.sh
 ```
 
 
@@ -161,8 +168,73 @@ pm2 kill
 sudo rm -rf /luIP-marzban
 ```
 
-### Things that need to be done
 
-- [ ] Api ( with token )
-- [ ] Marzban node
-- [ ] A bash script to summarize installation and configuration
+## API Reference
+
+We get to know the following environment variables that are located in the .env file by default.
+
+##### When you use the api, the data will be stored in a file called `users.csv`, and this file has a higher priority in reading than `MAX_ALLOW_USERS` and `users.json`, just as `users.json` has a higher priority than `MAX_ALLOW_USERS`.
+
+
+| Parameter | Description                |
+| :-------- | :------------------------- |
+| `API_ENABLE` | If you want to use api, set the value of this variable equal to `true` |
+| `API_SECRET` | Short secret for access_token. The encryption type of access_tokens is AES, and only the expiration date of the token is included in the access_token. secret is a password to encrypt and decrypt access_token with AES encryption type. |
+| `API_PATH` | Displays api path by default /api |
+| `API_LOGIN` | Enter a desired username and password in the username:password format so that you can be identified to receive the token |
+| `API_EXPIRE_TOKEN_AT` | Each access_token you receive has an expiration date. You can set it here |
+| `API_PORT` | Choose a port for your api address. Also make sure it is not occupied. By default 4000 |
+
+Your default api address: https://example.com:4000/api
+
+#### Get access_token
+
+```https
+  POST /api/token
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `username` | `string` | **Required**. Your `API_LOGIN` username |
+| `password` | `string` | **Required**. Your `API_LOGIN` password |
+
+
+#### Note: In all the following apis, send the value of api_key: YOUR_ACCESS_TOKEN as header. (Fill YOUR_ACCESS_TOKEN with the value you received from /api/token)
+
+#### Add user
+
+```http
+  POST /api/add
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. The name of your target config. For example test |
+| `limit`      | `number` | **Required**. What is the maximum limit? |
+
+#### Update user
+
+```http
+  POST /api/update
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. The name of your target config. For example test |
+| `limit`      | `number` | **Required**. What is the maximum limit? |
+
+#### Delete user
+
+```http
+  GET /api/delete/<email>
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. The name of your target config. For example test |
+
+#### Clear luIP database
+
+```http
+  GET /api/clear
+```
