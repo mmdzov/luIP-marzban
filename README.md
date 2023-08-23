@@ -189,7 +189,7 @@ Your default api address: https://example.com:4000/api
 
 #### Get access_token
 
-```https
+```http
   POST /api/token
 ```
 
