@@ -14,6 +14,7 @@ Limit users in each proxy configuration
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 - [API Reference](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
+- [FAQ](https://github.com/mmdzov/luIP-marzban/tree/main#faq)
 
 
 ## Mechanism
@@ -238,3 +239,21 @@ Your default api address: https://example.com:4000/api
 ```http
   GET /api/clear
 ```
+
+
+
+## FAQ
+
+#### If there are changes in marzban-node, should I restart luIP?
+
+Yes, to apply the changes, it is necessary to restart luIP through the following command
+
+```bash
+# first Open the project dir with follow command
+cd /luIP-marzban
+
+# then run follow command
+pm2 kill
+npm start
+```
+
