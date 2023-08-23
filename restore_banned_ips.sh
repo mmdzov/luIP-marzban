@@ -1,5 +1,6 @@
 #!/bin/bash
 
+touch blocked_ips.csv
 CSV_FILE="blocked_ips.csv"
 
 function restore_banned_ips() {
