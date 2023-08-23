@@ -56,9 +56,12 @@ function tg() {
       await ctx.replyWithDocument(
         new InputFile(join(__dirname, "../", "users.json"), "users.json"),
       );
-      await ctx.replyWithDocument(
-        new InputFile(join(__dirname, "../", "users.csv"), "users.csv"),
-      );
+
+      try {
+        await ctx.replyWithDocument(
+          new InputFile(join(__dirname, "../", "users.csv"), "users.csv"),
+        );
+      } catch (e) {}
     });
 
   bot.use(menu);
