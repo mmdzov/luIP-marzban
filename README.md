@@ -16,6 +16,7 @@ Limit users in each proxy configuration
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 - [API Reference](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 - [FAQ](https://github.com/mmdzov/luIP-marzban/tree/main#faq)
+- [Donate](https://github.com/mmdzov/luIP-marzban/tree/main#donate)
 
 
 ## Mechanism
@@ -269,3 +270,9 @@ pm2 kill
 npm start
 ```
 
+## Donate
+If you like it and it works for you, you can donate to support, develop and improve luIP-marzban. We wish the best for you
+
+1. Tron: `TLqwdoHRdV44QryvWsvaKn53MyN5wbRqZ6`
+
+1. Ton: `0x6AB03eF392da65cc0ce2A3688949Fe756eD156c0`
