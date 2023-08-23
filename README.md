@@ -5,6 +5,7 @@ Limit users in each proxy configuration
 ## Introduction
 
 - [Mechanism](https://github.com/mmdzov/luIP-marzban/tree/main#mechanism)
+- [Features](https://github.com/mmdzov/luIP-marzban/tree/main#features)
 - [Requirements](https://github.com/mmdzov/luIP-marzban/tree/main#installation)
   - [Install node.js](https://github.com/mmdzov/luIP-marzban/tree/main#install-nodejs)
   - [Install iptables / gawk / csvtool](https://github.com/mmdzov/luIP-marzban/tree/main#install-other-requirements)
@@ -30,6 +31,16 @@ Every x minutes, it is checked based on the `CHECK_INACTIVE_USERS_DURATION` vari
 IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands), then incoming traffic on said IP is blocked for the duration specified in the `BAN_TIME` variable.
 
 Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
+
+
+## Features
+
+- Automatic log
+- Connect to Telegram bot
+- API
+- Specific determination of users
+- Import/Export Backup
+- IP target
 
 ## Installation
 
