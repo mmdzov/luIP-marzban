@@ -41,6 +41,7 @@ Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x min
 - Specific determination of users
 - Import/Export Backup
 - IP target
+- Marzban node support 
 
 ## Installation
 
