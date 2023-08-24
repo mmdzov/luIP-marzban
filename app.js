@@ -72,7 +72,7 @@ if (process.env.NODE_ENV.includes("production")) {
           console.error(`ipunban.sh stderr: ${stderr}`);
           return;
         }
-        console.log(`ipunban.sh stdout: ${stdout}`);
+        // console.log(`ipunban.sh stdout: ${stdout}`);
       });
     },
   );
