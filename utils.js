@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
+const axios = require("axios");
 
 function banIP(ip, email) {
   const scriptPath = "./ipban.sh";
@@ -32,9 +33,9 @@ Duration: ${process.env.BAN_TIME} minutes
 class User {
   /**
    * @param {string} data Raw websocket data
-   * @returns {NewUserIpType[]}
+   * @returns {Promise<NewUserIpType[]>}
    */
-  GetNewUserIP = (data) => {
+  GetNewUserIP = async (data) => {
     let lines = data
       .split(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/g)
       .map((item) => item.trim())
@@ -42,22 +43,41 @@ class User {
 
     lines = lines.filter((item) => item.includes("accepted"));
 
-    if (!lines.length === 0) return [];
+    if (lines.length === 0) return [];
 
-    const getIp = (params) => {
+    const getIp = async (params) => {
       const chunks = params.split(":");
 
       if (/[a-zA-Z]/g.test(params)) chunks.shift();
 
+      try {
+        const { data } = await axios.get(`http://ip-api.com/json/${chunks[0]}`);
+
+        if (data.countryCode !== process.env.COUNTRY_CODE.toLocaleUpperCase())
+          return {};
+      } catch (e) {
+        console.error(e);
+        return {};
+      }
+
       return { ip: chunks[0], port: chunks[1] };
     };
 
-    lines = lines.map((item) => ({
-      ...getIp(item.split(" ")[0]),
-      email: item.split(" ").slice(-1)[0].replace(/\d\./g, ""),
-    }));
+    let newLines = [];
 
-    return lines.reduce((prev, curr) => {
+    for (let i in lines) {
+      const item = lines[i];
+      const res = await getIp(item.split(" ")[0]);
+
+      if (Object.keys(res).length === 0) continue;
+
+      newLines.push({
+        ...res,
+        email: item.split(" ").slice(-1)[0].replace(/\d\./g, ""),
+      });
+    }
+
+    return newLines.reduce((prev, curr) => {
       const index = prev.findIndex((item) => item.ip === curr.ip);
       if (index !== -1) prev[index] = curr;
       else prev.push(curr);

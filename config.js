@@ -52,7 +52,7 @@ class Ws {
     // Opened connections
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
-      const data = this.user.GetNewUserIP(bufferToString);
+      const data = await this.user.GetNewUserIP(bufferToString);
       if (data.length === 0) return;
 
       let num = data.length;
