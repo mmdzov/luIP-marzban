@@ -106,7 +106,7 @@ class DBSqlite3 extends DBInterface {
                 if (updateErr) {
                   throw new Error(updateErr);
                 } else {
-                  console.log("Ip Successfully Updated");
+                  // console.log("Ip Successfully Updated");
                 }
               },
             );
@@ -190,7 +190,7 @@ class DBSqlite3 extends DBInterface {
     const fewMinutesAgo = new Date(
       currentTime - +process.env.CHECK_INACTIVE_USERS_DURATION * 60 * 1000,
     );
-    console.log(fewMinutesAgo.toISOString());
+    // console.log(fewMinutesAgo.toISOString());
 
     db.serialize(function () {
       db.all(
@@ -211,7 +211,7 @@ class DBSqlite3 extends DBInterface {
               return idDate > fewMinutesAgo;
             });
 
-            console.log("updateIds", updatedIds);
+            // console.log("updateIds", updatedIds);
 
             db.run(
               `UPDATE users SET ips = ? WHERE email = ?`,
@@ -222,7 +222,7 @@ class DBSqlite3 extends DBInterface {
                   console.error(err);
                   return;
                 }
-                console.log(`Record with email ${email} updated.`);
+                // console.log(`Record with email ${email} updated.`);
               },
             );
           });

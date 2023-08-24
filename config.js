@@ -11,7 +11,7 @@ class Ws {
    * @param {WebSocketConfigType} params
    */
   constructor(params) {
-    let patch = params.node ? `node/${params.node}` : "core";
+    let patch = params?.node ? `node/${params.node}` : "core";
     this.access_token = params.accessToken;
     this.params = params;
 
