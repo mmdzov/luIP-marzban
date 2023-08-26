@@ -64,10 +64,10 @@ function tg() {
       } catch (e) {}
     })
     .row()
-    .text("All Connections", async (ctx) => {
-      // Should get all connections
-      // const db = new DBSqlite3()
-      //   db.readAll()
+    .text("Focus", async (ctx) => {
+      ctx.session.waitingFor = "Focus";
+
+      ctx.reply("Send the proxy username");
     });
 
   bot.use(menu);
@@ -83,6 +83,36 @@ How can i help you ?
       },
     );
   });
+
+  const db = new DBSqlite3();
+  // get connections
+  bot.on(
+    "message",
+    (ctx, next) => {
+      if (ctx.session.waitingFor === "FILE") return next();
+    },
+    async (ctx) => {
+      const username = (ctx.message?.text || "").trim();
+
+      if (!username) {
+        ctx.session.waitingFor = "";
+
+        return;
+      }
+
+      const data = await db.read(username);
+
+      ctx.reply(`
+Username: ${data.email}      
+Connections: [
+${data.ips
+  .map((item) => `F=${!!item?.first}, ${(item.ip, item.date)}`)
+  .join("\r\n")}  
+]
+
+      `);
+    },
+  );
 
   bot.on(
     ":document",
