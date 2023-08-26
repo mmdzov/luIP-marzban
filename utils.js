@@ -254,6 +254,12 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
+    const file = new File().GetCsvFile("banned_ips.csv").toString();
+
+    file = file.split("\r\n").map((item) => item.split(","));
+
+    if (file.some((item) => item[0] === params.ip) === true) return;
+
     banIP(`${params.ip}`, params.email);
     // console.log("ban", params);
   }
