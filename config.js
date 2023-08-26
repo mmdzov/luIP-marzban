@@ -37,7 +37,9 @@ class Ws {
 
       _ws.logs();
 
-      console.log(error, response);
+      console.log("Websocket unexpected response");
+
+      // console.log(error, response);
     });
 
     const user = new User();
