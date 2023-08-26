@@ -31,6 +31,8 @@ function tg() {
     return next();
   });
 
+  const db = new DBSqlite3();
+
   // bot.api.setMyCommands([
   //   {
   //     command: "start",
@@ -68,6 +70,14 @@ function tg() {
       ctx.session.waitingFor = "Focus";
 
       ctx.reply("Send the proxy username");
+    })
+    .row()
+    .text("Clear connections", async (ctx) => {
+      fs.writeFileSync(join(__dirname, "../", "db.sqlite"), "");
+
+      ctx.answerCallbackQuery({
+        text: "Applied",
+      });
     });
 
   bot.use(menu);
@@ -84,7 +94,6 @@ How can i help you ?
     );
   });
 
-  const db = new DBSqlite3();
   // get connections
   bot.on(
     "message",
