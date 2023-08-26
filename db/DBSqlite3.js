@@ -67,6 +67,7 @@ class DBSqlite3 extends DBInterface {
   addIp(email, ipData) {
     // Do not continue if the email is empty
     if (!email?.trim()) return;
+    if (!ipData?.ip) return;
 
     db.serialize(() => {
       // Find user based on email
