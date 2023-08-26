@@ -205,7 +205,11 @@ class IPGuard {
    * @returns {void | Promise<Function>}
    */
   async use(ip, ...callback) {
-    const data = await callback[0]();
+    let data = null;
+
+    try {
+      data = await callback[0]();
+    } catch (e) {}
 
     if (!data) return await callback[1]();
 
