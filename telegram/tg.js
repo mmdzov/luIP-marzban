@@ -116,7 +116,12 @@ How can i help you ?
   Username: ${data.email}      
   Connections: [
   ${data.ips
-    .map((item) => `F=${!!item?.first}, ${item.ip}, ${item.date}`)
+    .map(
+      (item) =>
+        `F=${!!item?.first}, ${item.ip}, ${new Date(item.date).toLocaleString(
+          "fa-IR",
+        )}`,
+    )
     .join("\r\n")}  
   ]
   

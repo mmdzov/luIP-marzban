@@ -66,6 +66,9 @@ class Ws {
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
       const data = await this.user.GetNewUserIP(bufferToString);
+
+      console.log("newLines After", data);
+
       if (data.length === 0) return;
 
       let num = data.length;

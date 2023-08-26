@@ -80,6 +80,10 @@ class User {
       });
     }
 
+    console.log("lines", lines);
+
+    console.log("newLines Before", newLines);
+
     return newLines.reduce((prev, curr) => {
       const index = prev.findIndex((item) => item.ip === curr.ip);
       if (index !== -1) prev[index] = curr;
