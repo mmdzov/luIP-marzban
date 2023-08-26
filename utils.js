@@ -55,7 +55,7 @@ class User {
 
         if (
           data.countryCode !==
-          (process.env?.COUNTRY_CODE?.toLocaleUpperCase() || "IR")
+          (process.env?.COUNTRY_CODE?.toUpperCase() || "IR")
         )
           return {};
       } catch (e) {

@@ -20,6 +20,9 @@ class Ws {
     }/api/${patch}/logs?interval=${process.env.FETCH_INTERVAL_LOGS_WS}&token=${
       this.access_token
     }`;
+
+    console.log(url);
+
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
 
