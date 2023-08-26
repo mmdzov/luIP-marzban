@@ -6,6 +6,7 @@ const { hydrateFiles } = require("@grammyjs/files");
 const fs = require("fs");
 const { join } = require("path");
 const { File } = require("../utils");
+const DBSqlite3 = require("../db/DBSqlite3");
 
 function tg() {
   if (process.env.TG_ENABLE === "false") return;
@@ -30,12 +31,12 @@ function tg() {
     return next();
   });
 
-  bot.api.setMyCommands([
-    {
-      command: "start",
-      description: "Start the bot",
-    },
-  ]);
+  // bot.api.setMyCommands([
+  //   {
+  //     command: "start",
+  //     description: "Start the bot",
+  //   },
+  // ]);
 
   bot.api.config.use(hydrateFiles(bot.token));
 
@@ -51,7 +52,6 @@ function tg() {
 
       ctx.session.waitingFor = "FILE";
     })
-    .row()
     .text("Export backup", async (ctx) => {
       await ctx.replyWithDocument(
         new InputFile(join(__dirname, "../", "users.json"), "users.json"),
@@ -62,6 +62,12 @@ function tg() {
           new InputFile(join(__dirname, "../", "users.csv"), "users.csv"),
         );
       } catch (e) {}
+    })
+    .row()
+    .text("All Connections", async (ctx) => {
+      // Should get all connections
+      // const db = new DBSqlite3()
+      //   db.readAll()
     });
 
   bot.use(menu);

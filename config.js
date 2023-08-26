@@ -25,11 +25,19 @@ class Ws {
 
     // retry to get token
     ws.on("unexpected-response", async (error, response) => {
-      const token = await params.api.token();
+      const api = new Api();
+
+      api.create();
+
+      const token = await api.token();
+
+      // const token = await params.api.token();
 
       const _ws = new Ws({ ...params, accessToken: token });
 
       _ws.logs();
+
+      console.log(error, response);
     });
 
     const user = new User();

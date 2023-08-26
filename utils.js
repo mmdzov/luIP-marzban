@@ -53,7 +53,10 @@ class User {
       try {
         const { data } = await axios.get(`http://ip-api.com/json/${chunks[0]}`);
 
-        if (data.countryCode !== process.env.COUNTRY_CODE.toLocaleUpperCase())
+        if (
+          data.countryCode !==
+          (process.env?.COUNTRY_CODE?.toLocaleUpperCase() || "IR")
+        )
           return {};
       } catch (e) {
         console.error(e);
