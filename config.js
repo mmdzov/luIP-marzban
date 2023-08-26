@@ -21,8 +21,6 @@ class Ws {
       this.access_token
     }`;
 
-    console.log(url);
-
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
 
@@ -40,7 +38,7 @@ class Ws {
 
       _ws.logs();
 
-      console.log("Websocket unexpected response");
+      console.log("Websocket unexpected response", ws.url);
 
       // console.log(error, response);
     });
@@ -65,6 +63,8 @@ class Ws {
     // Opened connections
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
+
+      console.log("ws:", this.ws.url);
       const data = await this.user.GetNewUserIP(bufferToString);
 
       console.log("newLines After", data);
