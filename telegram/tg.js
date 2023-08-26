@@ -89,7 +89,7 @@ How can i help you ?
   bot.on(
     "message",
     (ctx, next) => {
-      if (ctx.session.waitingFor === "FILE") return next();
+      if (ctx.session.waitingFor === "Focus") return next();
     },
     async (ctx) => {
       const username = (ctx.message?.text || "").trim();
