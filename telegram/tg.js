@@ -109,17 +109,24 @@ How can i help you ?
         return;
       }
 
-      const data = await db.read(username);
+      try {
+        const data = await db.read(username);
 
-      ctx.reply(`
-Username: ${data.email}      
-Connections: [
-${data.ips
-  .map((item) => `F=${!!item?.first}, ${item.ip}, ${item.date}`)
-  .join("\r\n")}  
-]
-
-      `);
+        ctx.reply(`
+  Username: ${data.email}      
+  Connections: [
+  ${data.ips
+    .map((item) => `F=${!!item?.first}, ${item.ip}, ${item.date}`)
+    .join("\r\n")}  
+  ]
+  
+        `);
+      } catch (e) {
+        ctx.reply(
+          "Failed: The user may not have connected to the proxy yet or may have disconnected.",
+        );
+        console.log(e);
+      }
     },
   );
 
