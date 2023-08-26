@@ -25,14 +25,14 @@ class Ws {
     const ws = new WebSocket(url);
 
     // retry to get token
-    ws.on("unexpected-response", async (error, response) => {
-      const api = new Api();
+    ws.on("error", async (error, response) => {
+      // const api = new Api();
 
-      api.create();
+      // api.create();
 
-      const token = await api.token();
+      // const token = await api.token();
 
-      // const token = await params.api.token();
+      const token = await params.api.token();
 
       const _ws = new Ws({ ...params, accessToken: token });
 
@@ -45,13 +45,7 @@ class Ws {
 
     const user = new User();
     const ipGuard = new IPGuard(new DBSqlite3());
-
-    /**
-     * someProperty is an example property that is set to `true`
-     * @type {WebSocketConfigType}
-     * @public
-     */
-    this.params = params;
+    // this.params = params;
 
     this.db = db;
     this.user = user;
@@ -64,10 +58,7 @@ class Ws {
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
 
-      console.log("ws:", this.ws.url);
       const data = await this.user.GetNewUserIP(bufferToString);
-
-      console.log("newLines After", data);
 
       if (data.length === 0) return;
 

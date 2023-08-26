@@ -31,9 +31,14 @@ def();
     false,
   );
 
-  const nodes = await api.getNodes();
+  const ws = new Ws({
+    url,
+    accessToken: `${api.accessToken}`,
+    DB: DBType,
+    api,
+  });
 
-  const ws = new Ws({ url, accessToken: api.accessToken, DB: DBType, api });
+  const nodes = await api.getNodes();
 
   ws.logs();
 
@@ -42,7 +47,7 @@ def();
 
     const ws = new Ws({
       url,
-      accessToken: `${api.accessToken}d`,
+      accessToken: `${api.accessToken}`,
       DB: DBType,
       node,
       api,

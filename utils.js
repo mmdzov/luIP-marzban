@@ -59,7 +59,7 @@ class User {
         )
           return {};
       } catch (e) {
-        console.error(e);
+        // console.error(e);
         return {};
       }
 
@@ -80,9 +80,9 @@ class User {
       });
     }
 
-    console.log("lines", lines);
+    // console.log("lines", lines);
 
-    console.log("newLines Before", newLines);
+    // console.log("newLines Before", newLines);
 
     return newLines.reduce((prev, curr) => {
       const index = prev.findIndex((item) => item.ip === curr.ip);

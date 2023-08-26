@@ -118,7 +118,7 @@ How can i help you ?
   ${data.ips
     .map(
       (item) =>
-        `F=${!!item?.first}, ${item.ip}, ${new Date(item.date).toLocaleString(
+        `${item.ip}, ${new Date(item.date).toLocaleString(
           "fa-IR",
         )}`,
     )
@@ -134,6 +134,8 @@ How can i help you ?
       }
     },
   );
+
+  
 
   bot.on(
     ":document",
