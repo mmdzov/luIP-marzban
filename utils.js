@@ -262,7 +262,9 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    let file = new File().GetCsvFile("blocked_ips.csv").toString();
+    let file = new File()
+      .GetCsvFile(join(__dirname, "blocked_ips.csv"))
+      .toString();
 
     file = file.split("\r\n").map((item) => item.split(","));
 
