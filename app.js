@@ -1,5 +1,5 @@
 const { Server } = require("./utils");
-const { Ws, Api, Socket } = require("./config");
+const { Ws, Api, Socket, IPGuard } = require("./config");
 const DBSqlite3 = require("./db/DBSqlite3");
 const def = require("./def");
 const app = require("express")();
@@ -63,32 +63,45 @@ const socket = new Socket({
 })();
 
 if (process.env.NODE_ENV.includes("production")) {
-  nodeCron.schedule(
-    `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
-    () => {
-      const db = new DBAdapter(DBType);
-      db.deleteInactiveUsers();
-    },
-  );
+  if (process.env?.TARGET === "IP") {
+    nodeCron.schedule(
+      `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+      () => {
+        const db = new DBAdapter(DBType);
+        db.deleteInactiveUsers();
+      },
+    );
+    nodeCron.schedule(
+      `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
+      () => {
+        socket.UnbanIP();
 
-  nodeCron.schedule(
-    `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
-    () => {
-      socket.UnbanIP();
+        exec("bash ./ipunban.sh", (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error executing ipunban.sh: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`ipunban.sh stderr: ${stderr}`);
+            return;
+          }
+          // console.log(`ipunban.sh stdout: ${stdout}`);
+        });
+      },
+    );
+  }
 
-      exec("bash ./ipunban.sh", (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error executing ipunban.sh: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.error(`ipunban.sh stderr: ${stderr}`);
-          return;
-        }
-        // console.log(`ipunban.sh stdout: ${stdout}`);
-      });
-    },
-  );
+  if (process.env.TARGET === "PROXY") {
+    nodeCron.schedule(
+      `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+      () => {
+        new IPGuard({
+          api,
+          db: DBType,
+        }).activeUsersProxy();
+      },
+    );
+  }
 }
 
 // Api server

@@ -1,5 +1,4 @@
 const { DBInterface } = require("../interface");
-const { IPGuard } = require("../utils");
 
 class DBAdapter {
   /**

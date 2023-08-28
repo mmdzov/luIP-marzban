@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const { User, Server, IPGuard, File } = require("./utils");
+const { User, Server, IPGuard, File, banIP } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
@@ -7,6 +7,7 @@ const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
 const crypto = require("crypto-js");
 const socket = require("socket.io");
+const fs = require("fs");
 
 class Ws {
   /**
@@ -46,7 +47,12 @@ class Ws {
     });
 
     const user = new User();
-    const ipGuard = new IPGuard(new DBSqlite3(), params.socket);
+    const ipGuard = new IPGuard({
+      banDB: new DBSqlite3(),
+      socket: params.socket,
+      api: params.api,
+      db: this.db,
+    });
     // this.params = params;
 
     this.db = db;
@@ -173,6 +179,20 @@ class Api {
 
     return nodes;
   }
+
+  /**
+   * @param {string} email
+   * @param {"disabled" | "active"} status
+   */
+  async changeUserProxyStatus(email, status) {
+    try {
+      await this.axios.post(`/user/${email}`, {
+        status,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 class Socket {
@@ -266,6 +286,160 @@ class Connection {
 }
 
 /**
+ * @description IP Guard
+ */
+class IPGuard {
+  /**
+   * @param {IpGuardType} params
+   */
+  constructor(params) {
+    this.banDB = params.banDB;
+    this.socket = params.socket;
+    this.api = params.api;
+    this.db = params.db;
+  }
+
+  /**
+   *
+   * @param {IPSDataType} record A user's record includes email, ips array
+   * @param {function[]} callback Return function to allow ip usage
+   *
+   * @returns {void | Promise<Function>}
+   */
+  async use(ip, ...callback) {
+    let data = null;
+
+    try {
+      data = await callback[0]();
+    } catch (e) {}
+
+    if (!data) return await callback[1]();
+
+    const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
+
+    const users = new File().GetJsonFile(join(__dirname, "users.json"));
+    let usersCsv = new File()
+      .GetCsvFile(join(__dirname, "users.csv"))
+      .toString();
+
+    if (usersCsv.trim()) {
+      usersCsv = usersCsv.split("\r\n").map((item) => item.split(","));
+    }
+
+    if (usersCsv && usersCsv.some((item) => item[0] === data.email) === false)
+      usersCsv = null;
+
+    let userCsv = null;
+    if (usersCsv.trim())
+      userCsv = usersCsv.filter((item) => item[0] === data.email)[0] || null;
+
+    const user = users.filter((item) => item[0] === data.email)[0] || null;
+
+    const maxAllowConnection = userCsv
+      ? +userCsv[1]
+      : user
+      ? +user[1]
+      : +process.env.MAX_ALLOW_USERS;
+
+    const limited = data.ips.length > maxAllowConnection;
+
+    // Remove last user from db
+    if (indexOfIp !== -1 && limited) {
+      return callback[2]();
+    }
+
+    if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
+      if (process.env?.TARGET === "PROXY") {
+        await this.deactiveUserProxy(data.email);
+
+        return;
+      }
+
+      let file = new File()
+        .GetCsvFile(join(__dirname, "blocked_ips.csv"))
+        .toString();
+
+      file = file.split("\r\n").map((item) => item.split(","));
+
+      if (file.some((item) => item[0] === ip) === true) return;
+
+      this.socket.BanIP({
+        ip,
+        expireAt: process.env.BAN_TIME,
+      });
+
+      this.ban({ ip, email: data.email });
+
+      return;
+    }
+
+    return await callback[1]();
+  }
+
+  /**
+   * @param {BanIpConfigAddType} params
+   */
+  ban(params) {
+    banIP(`${params.ip}`, params.email);
+    // console.log("ban", params);
+  }
+
+  /**
+   * @param {string} email
+   */
+  async deactiveUserProxy(email) {
+    const path = join(__dirname, "deactives.json");
+
+    const deactives = new File().GetJsonFile(path);
+
+    if (deactives.some((item) => item.email === email) === true) return;
+
+    await this.api.changeUserProxyStatus(email, "disabled");
+
+    const fewMinutesLater = new Date(
+      Date.now() + 1000 * 60 * process.env?.BAN_TIME,
+    ).toISOString();
+
+    deactives.push({
+      email,
+      activationAt: fewMinutesLater,
+    });
+
+    fs.writeFileSync(deactives, JSON.stringify(deactives));
+
+    this.db.deleteUser(email);
+  }
+
+  /**
+   * @param {string} email
+   */
+  async activeUsersProxy() {
+    const path = join(__dirname, "deactives.json");
+
+    const deactives = new File().GetJsonFile(path);
+
+    const currentTime = new Date().getTime();
+
+    let shouldActive = deactives.filter((item) => {
+      const activeAt = new Date(item.activationAt);
+      return currentTime > activeAt;
+    });
+
+    for (let i in shouldActive) {
+      const data = shouldActive[i];
+
+      await this.api.changeUserProxyStatus(data.email, "active");
+    }
+
+    shouldActive = shouldActive.map(item => item.email)
+
+    const replaceData = deactives.filter((item) => !shouldActive.includes(item.email));
+
+    fs.writeFileSync(deactives, JSON.stringify(replaceData));
+  }
+}
+
+/**
  * @deprecated
  */
 class BanDBConfig {
@@ -318,4 +492,4 @@ class BanDBConfig {
   }
 }
 
-module.exports = { Ws, Api, Connection, Socket, BanDBConfig };
+module.exports = { Ws, Api, Connection, Socket,IPGuard, BanDBConfig };

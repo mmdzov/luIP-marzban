@@ -65,3 +65,11 @@
  * @property {ApiResponseErrorType} error
  * @property {0|1} status
  */
+
+/**
+ * @typedef {Object} IpGuardType
+ * @property {*} banDB
+ * @property {import("./config").Socket} socket
+ * @property {import("./config").Api} api
+ * @property {import("./db/Adapter").DBAdapter} db
+ */
