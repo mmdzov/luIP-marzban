@@ -93,7 +93,7 @@ if (process.env.NODE_ENV.includes("production")) {
 
   if (process.env.TARGET === "PROXY") {
     nodeCron.schedule(
-      `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+      `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
       () => {
         new IPGuard({
           api,
