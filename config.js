@@ -5,6 +5,8 @@ const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
 const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
+const crypto = require("crypto-js");
+const socket = require("socket.io");
 
 class Ws {
   /**
@@ -44,7 +46,7 @@ class Ws {
     });
 
     const user = new User();
-    const ipGuard = new IPGuard(new DBSqlite3());
+    const ipGuard = new IPGuard(new DBSqlite3(), params.socket);
     // this.params = params;
 
     this.db = db;
@@ -55,6 +57,9 @@ class Ws {
 
   logs() {
     // Opened connections
+
+    if (process.env.NODE_ENV.includes("development")) return;
+
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
 
@@ -170,6 +175,82 @@ class Api {
   }
 }
 
+class Socket {
+  connected = false;
+
+  /**
+   * @typedef {Object} SocketArgsType
+   * @property {string} server
+   * @property {string[]} corsOrigin
+   * @property {import("socket.io").ServerOptions} options
+   * @property {(socket: import("socket.io").Socket) => void} callback
+   *
+   * @param {SocketArgsType} args
+   */
+  constructor(args) {
+    /**
+     * @typedef {import("socket.io").Server} SocketServer
+     *
+     * @type {SocketServer}
+     */
+    this.socket = new socket.Server(args.server, {
+      cors: {
+        origin: args?.corsOrigin || [],
+      },
+      ...args.options,
+    });
+
+    this.socket
+      .of(process.env?.LISTEN_PATH)
+      .use(this.Auth)
+      .on("connection", (socket) => {
+        this.connected = socket.connected;
+
+        args.callback(socket);
+      });
+  }
+
+  Auth(socket, next) {
+    const apiKey = socket.handshake.query.api_key;
+
+    let decryptedKey = crypto.AES.decrypt(
+      apiKey,
+      process.env.API_SECRET,
+    ).toString(crypto.enc.Utf8);
+
+    const parseKey = JSON.parse(decryptedKey);
+
+    if (Date.now() > +parseKey.expireAt)
+      return next(new Error("Authentication error"));
+
+    next();
+  }
+
+  /**
+   * @typedef {Object} BanIPArgsType
+   * @property {string} ip
+   * @property {string} expireAt
+   *
+   * @param {BanIPArgsType} args
+   *
+   * @returns {void}
+   */
+  BanIP(args) {
+    if (!this.connected) return;
+
+    this.socket.emit("user:ip:ban", JSON.stringify(args));
+  }
+
+  /**
+   * @returns {void}
+   */
+  UnbanIP() {
+    if (!this.connected) return;
+
+    this.socket.emit("user:ip:unban", JSON.stringify({}));
+  }
+}
+
 class Connection {
   /**
    *
@@ -237,4 +318,4 @@ class BanDBConfig {
   }
 }
 
-module.exports = { Ws, Api, Connection, BanDBConfig };
+module.exports = { Ws, Api, Connection, Socket, BanDBConfig };

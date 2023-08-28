@@ -26,6 +26,7 @@
  * @property {object} DB
  * @property {string} node
  * @property {Object} api
+ * @property {import("./config").Socket} socket
  */
 
 /**

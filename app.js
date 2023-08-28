@@ -1,8 +1,8 @@
 const { Server } = require("./utils");
-const { Ws, Api } = require("./config");
+const { Ws, Api, Socket } = require("./config");
 const DBSqlite3 = require("./db/DBSqlite3");
 const def = require("./def");
-const express = require("express");
+const app = require("express")();
 const nodeCron = require("node-cron");
 const { DBAdapter } = require("./db/Adapter");
 const { exec } = require("child_process");
@@ -10,13 +10,21 @@ const { join } = require("path");
 const router = require("./api/controller");
 const bodyParser = require("body-parser");
 const tg = require("./telegram/tg");
+const server = require("http").createServer(app);
+
 require("dotenv").config();
 
-const app = express();
 const api = new Api();
 const DBType = new DBSqlite3();
 
 def();
+
+const socket = new Socket({
+  server,
+  callback: (socket) => {
+    // console.log("Connected to socket server.");
+  },
+});
 
 (async () => {
   tg();
@@ -31,12 +39,15 @@ def();
     false,
   );
 
-  const ws = new Ws({
+  const wsData = {
     url,
     accessToken: `${api.accessToken}`,
     DB: DBType,
     api,
-  });
+    socket,
+  };
+
+  const ws = new Ws(wsData);
 
   const nodes = await api.getNodes();
 
@@ -45,13 +56,7 @@ def();
   for (let i in nodes) {
     const node = nodes[i];
 
-    const ws = new Ws({
-      url,
-      accessToken: `${api.accessToken}`,
-      DB: DBType,
-      node,
-      api,
-    });
+    const ws = new Ws({ ...wsData, node });
 
     ws.logs();
   }
@@ -65,9 +70,12 @@ if (process.env.NODE_ENV.includes("production")) {
       db.deleteInactiveUsers();
     },
   );
+
   nodeCron.schedule(
     `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
     () => {
+      socket.UnbanIP();
+
       exec("bash ./ipunban.sh", (error, stdout, stderr) => {
         if (error) {
           console.error(`Error executing ipunban.sh: ${error.message}`);
@@ -85,10 +93,10 @@ if (process.env.NODE_ENV.includes("production")) {
 
 // Api server
 if (process.env?.API_ENABLE === "true") {
-  const PORT = process.env?.API_PORT;
+  const PORT = process.env?.API_PORT || 3000;
 
   let address = new Server().CleanAddress(
-    `${process.env.ADDRESS}:${process.env.API_PORT}`,
+    `${process.env.ADDRESS}:${PORT}`,
     false,
     true,
   );
@@ -104,7 +112,7 @@ if (process.env?.API_ENABLE === "true") {
 
   app.use(`${process.env.API_PATH}`, router);
 
-  const server = app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server running: ${address}`);
   });
 }

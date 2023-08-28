@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
 const axios = require("axios");
+const { join } = require("path");
 
 function banIP(ip, email) {
   const scriptPath = "./ipban.sh";
@@ -154,7 +155,7 @@ class Server {
    * @param {boolean} api Return address with api
    * @returns {string}
    */
-  CleanAddress(address, api = true, showHttp = true) {
+  CleanAddress(address, api = true, showHttp = true, socket = false) {
     const [ADDRESS, port] = address.split(":");
 
     let _address = address;
@@ -166,6 +167,7 @@ class Server {
       else _address = `http://${_address}`;
 
     if (api) _address += "/api";
+    if (socket) _address += process.env.LISTEN_PATH;
 
     return _address;
   }
@@ -197,8 +199,14 @@ class File {
  * @description IP Guard
  */
 class IPGuard {
-  constructor(banDB) {
+  /**
+   *
+   * @param {*} banDB
+   * @param {import("./config").Socket} socket
+   */
+  constructor(banDB, socket) {
     this.banDB = banDB;
+    this.socket = socket;
   }
 
   /**
@@ -219,8 +227,10 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new File().GetJsonFile("users.json");
-    let usersCsv = new File().GetCsvFile("users.csv").toString();
+    const users = new File().GetJsonFile(join(__dirname, "users.json"));
+    let usersCsv = new File()
+      .GetCsvFile(join(__dirname, "users.csv"))
+      .toString();
 
     if (usersCsv.trim()) {
       usersCsv = usersCsv.split("\r\n").map((item) => item.split(","));
@@ -250,6 +260,19 @@ class IPGuard {
 
     //
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
+      let file = new File()
+        .GetCsvFile(join(__dirname, "blocked_ips.csv"))
+        .toString();
+
+      file = file.split("\r\n").map((item) => item.split(","));
+
+      if (file.some((item) => item[0] === ip) === true) return;
+
+      this.socket.BanIP({
+        ip,
+        expireAt: process.env.BAN_TIME,
+      });
+
       this.ban({ ip, email: data.email });
 
       return;
@@ -262,14 +285,6 @@ class IPGuard {
    * @param {BanIpConfigAddType} params
    */
   ban(params) {
-    let file = new File()
-      .GetCsvFile(join(__dirname, "blocked_ips.csv"))
-      .toString();
-
-    file = file.split("\r\n").map((item) => item.split(","));
-
-    if (file.some((item) => item[0] === params.ip) === true) return;
-
     banIP(`${params.ip}`, params.email);
     // console.log("ban", params);
   }

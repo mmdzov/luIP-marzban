@@ -22,6 +22,7 @@
     "@grammyjs/files": "^1.0.4",
     "@grammyjs/menu": "^1.2.1",
     "@grammyjs/runner": "^2.0.3",
+    "@types/socket.io": "^3.0.2",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "crypto-js": "^4.1.1",
@@ -32,6 +33,7 @@
     "node-cron": "^3.0.2",
     "node-html-parser": "^6.1.5",
     "pm2": "^5.3.0",
+    "socket.io": "^4.7.2",
     "socks-proxy-agent": "^8.0.1",
     "sqlite3": "^5.1.6",
     "ws": "^8.13.0"
