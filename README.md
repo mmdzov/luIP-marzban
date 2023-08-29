@@ -32,7 +32,7 @@ IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/
 Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
 
 <p align="center" width="100%">
-    <img width="33%" src="https://github.com/mmdzov/luIP-marzban/blob/7b92fabdad4ab1e7ea818fd988b9875c866b8eaa/luIP-marzban.jpg" />
+    <img width="50%" src="https://github.com/mmdzov/luIP-marzban/blob/7b92fabdad4ab1e7ea818fd988b9875c866b8eaa/luIP-marzban.jpg" />
 </p>
 
 
