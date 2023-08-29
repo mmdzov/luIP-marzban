@@ -152,7 +152,7 @@ Advantages
 
 2. Less consumption of resources.
 
-3. No need to install luIP-marzban-node.
+3. No need to install [luIP-marzban-node](https://github.com/mmdzov/luIP-marzban/tree/dev#node-version).
 
 ## users.json 
 You can set specific users in the users.json file
