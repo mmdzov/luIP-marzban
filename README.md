@@ -1,7 +1,6 @@
 # luIP-marzban
 Limit users in each proxy configuration
 
-
 ## Introduction
 
 - [Mechanism](https://github.com/mmdzov/luIP-marzban/tree/main#mechanism)
@@ -31,6 +30,10 @@ Every x minutes, it is checked based on the `CHECK_INACTIVE_USERS_DURATION` vari
 IPs are blocked via [iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands), then incoming traffic on said IP is blocked for the duration specified in the `BAN_TIME` variable.
 
 Blocked IPs automatically in `blocked_ips.csv` file are stored, then every x minutes based on the value of the `CHECK_IPS_FOR_UNBAN_USERS` variable, the ipunban.sh file is executed and checks: if the stored IPs have been jailed for y minutes or more, they will be released from jail
+
+<p align="center" width="100%">
+    <img width="80%" src="https://github.com/mmdzov/luIP-marzban/blob/7b92fabdad4ab1e7ea818fd988b9875c866b8eaa/luIP-marzban.jpg" />
+</p>
 
 
 ## Features
