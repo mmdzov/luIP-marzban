@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const { User, Server, IPGuard, File, banIP } = require("./utils");
+const { User, Server, File, banIP } = require("./utils");
 const { default: axios } = require("axios");
 const { DBAdapter } = require("./db/Adapter");
 const { join } = require("path");
