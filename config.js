@@ -431,9 +431,11 @@ class IPGuard {
       await this.api.changeUserProxyStatus(data.email, "active");
     }
 
-    shouldActive = shouldActive.map(item => item.email)
+    shouldActive = shouldActive.map((item) => item.email);
 
-    const replaceData = deactives.filter((item) => !shouldActive.includes(item.email));
+    const replaceData = deactives.filter(
+      (item) => !shouldActive.includes(item.email),
+    );
 
     fs.writeFileSync(deactives, JSON.stringify(replaceData));
   }
@@ -492,4 +494,4 @@ class BanDBConfig {
   }
 }
 
-module.exports = { Ws, Api, Connection, Socket,IPGuard, BanDBConfig };
+module.exports = { Ws, Api, Connection, Socket, IPGuard, BanDBConfig };
