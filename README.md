@@ -83,6 +83,9 @@ If you don't have node.js installed on your server, install it with nvm
   nano .env
 ```
 
+| Parameter | Description                |
+| :-------- | :------------------------- |
+| `TARGET` | You can set the target. [More]() |
 
 #### Address configuration
 | Parameter | Description                |
