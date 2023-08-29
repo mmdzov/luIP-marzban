@@ -83,9 +83,10 @@ If you don't have node.js installed on your server, install it with nvm
   nano .env
 ```
 
+
 | Parameter | Description                |
 | :-------- | :------------------------- |
-| `TARGET` | You can set the target. [More]() |
+| `TARGET` | You can set the target. [More](https://github.com/mmdzov/luIP-marzban/tree/dev#node-version) |
 
 #### Address configuration
 | Parameter | Description                |
@@ -125,6 +126,33 @@ If you don't have node.js installed on your server, install it with nvm
 | `TG_ENABLE` | If you want to use Telegram bot for logs, set this value to `true` |
 | `TG_TOKEN` | The bot token you received from @botfather |
 | `TG_ADMIN` | Your user ID that you received from @userinfobot |
+
+## Target
+You can set the target. Its value is considered as IP by default.
+
+
+### TARGET=IP
+Blocks unauthorized IPs and maintains connections
+
+Advantages
+
+1. Better user experience: Unauthorized IPs are blocked and connected users are not disconnected.
+
+2. View connected users: You can view connected users and monitor them.
+
+
+### TARGET=PROXY
+
+In this method, the focus is on enabling/disabling the proxy, and if the connections of a proxy reach its limit, it will be disabled and will be turned on again after a period of time has passed.
+
+
+Advantages
+
+1. Easier to use.
+
+2. Less consumption of resources.
+
+3. No need to install luIP-marzban-node.
 
 ## users.json 
 You can set specific users in the users.json file
