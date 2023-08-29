@@ -33,6 +33,13 @@ router.get("/delete/:email", AuthApiKey, (req, res) => {
   return res.json(result);
 });
 
+// Send your proxy email data to be deleted
+router.get("/user/:email", AuthApiKey, (req, res) => {
+  const result = model.getUser(req.params);
+
+  return res.json(result);
+});
+
 // Clear users.csv file
 router.get("/clear", AuthApiKey, (req, res) => {
   const result = model.clear();

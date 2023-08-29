@@ -3,6 +3,7 @@ const { File } = require("../utils");
 const { join } = require("path");
 const fs = require("fs");
 const { response } = require("./utils");
+const DBSqlite3 = require("../db/DBSqlite3");
 
 class Model {
   constructor() {
@@ -123,6 +124,33 @@ class Model {
     fs.writeFileSync(this.usersCsvPath, emails);
 
     return response({
+      status: 1,
+    });
+  }
+
+  async getUser(email) {
+    const db = new DBSqlite3();
+
+    let user = null;
+
+    try {
+      user = await db.read(email);
+    } catch (e) {
+      // console.error(e)
+      return response({
+        error: {
+          type: "NOT_FOUND",
+          reason: "This email does not exist",
+        },
+      });
+    }
+
+    return response({
+      data: {
+        email,
+        ips: user.ips,
+        connections: user.ips.length,
+      },
       status: 1,
     });
   }
