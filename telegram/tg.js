@@ -71,14 +71,15 @@ function tg() {
 
       ctx.reply("Send the proxy username");
     })
-    .row()
-    .text("Clear connections", async (ctx) => {
-      fs.writeFileSync(join(__dirname, "../", "db.sqlite"), "");
+    .row();
 
-      ctx.answerCallbackQuery({
-        text: "Applied",
-      });
-    });
+  // .text("Clear connections", async (ctx) => {
+  //   fs.writeFileSync(join(__dirname, "../", "db.sqlite"), "");
+
+  //   ctx.answerCallbackQuery({
+  //     text: "Applied",
+  //   });
+  // });
 
   bot.use(menu);
 
@@ -116,12 +117,7 @@ How can i help you ?
   Username: ${data.email}      
   Connections: [
   ${data.ips
-    .map(
-      (item) =>
-        `${item.ip}, ${new Date(item.date).toLocaleString(
-          "fa-IR",
-        )}`,
-    )
+    .map((item) => `${item.ip}, ${new Date(item.date).toLocaleString("fa-IR")}`)
     .join("\r\n")}  
   ]
   
@@ -134,8 +130,6 @@ How can i help you ?
       }
     },
   );
-
-  
 
   bot.on(
     ":document",
