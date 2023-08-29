@@ -155,6 +155,10 @@ After configuring the project, run it
 
 ```
 
+
+## Node version
+If you want the IP limiter to be supported in the nodes, first make sure in the .env file that the TARGET is equal to the IP, then install and run the [luIP-marzban-node](https://github.com/mmdzov/luIP-marzban-node) project on all your nodes.
+
 ## Stop luIP with kill process
 
 You can run the command below, but whenever you want, you can go to the project path [ `cd /luIP-marzban` ] and type `npm start`, luIP will run again.
