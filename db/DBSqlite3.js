@@ -89,7 +89,7 @@ class DBSqlite3 extends DBInterface {
 
           // Get the users.json file
           const usersJson = new File().GetJsonFile(
-            join(__dirname, "users.json"),
+            join(__dirname, "../", "users.json"),
           );
           const indexOfUser = usersJson.findIndex((item) => item[0] === email);
 
