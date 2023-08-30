@@ -352,8 +352,13 @@ class IPGuard {
       return callback[2]();
     }
 
-    console.log(data.ips.length, maxAllowConnection, indexOfIp);
-    
+    console.log(
+      data.ips.length,
+      maxAllowConnection,
+      indexOfIp,
+      process.env?.TARGET,
+    );
+
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
       if (process.env?.TARGET === "PROXY") {
         console.log("deactive:", data.email, ip);
