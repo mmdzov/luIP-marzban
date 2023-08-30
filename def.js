@@ -15,6 +15,15 @@ function def() {
   );
 
   new File().ForceExistsFile(join(__dirname, "blocked_ips.csv"), "");
+  new File().ForceExistsFile(
+    join(__dirname, "session.json"),
+    JSON.stringify({
+      api: {
+        key: "",
+        expireAt: 0,
+      },
+    }),
+  );
 
   if (process.env?.TARGET === "PROXY") {
     new File().ForceExistsFile(

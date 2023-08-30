@@ -28,23 +28,23 @@ class Ws {
     const ws = new WebSocket(url);
 
     // retry to get token
-    ws.on("error", async (error, response) => {
-      // const api = new Api();
+    // ws.on("error", async (error, response) => {
+    //   // const api = new Api();
 
-      // api.create();
+    //   // api.create();
 
-      // const token = await api.token();
+    //   // const token = await api.token();
 
-      const token = await params.api.token();
+    //   const token = await params.api.token();
 
-      const _ws = new Ws({ ...params, accessToken: token });
+    //   const _ws = new Ws({ ...params, accessToken: token });
 
-      _ws.logs();
+    //   _ws.logs();
 
-      console.log("Websocket unexpected response", ws.url);
+    //   console.log("Websocket unexpected response", ws.url);
 
-      // console.log(error, response);
-    });
+    //   // console.log(error, response);
+    // });
 
     const user = new User();
     const ipGuard = new IPGuard({
@@ -90,6 +90,7 @@ class Ws {
         );
       }
     });
+    return this;
   }
 }
 
@@ -129,7 +130,9 @@ class Api {
         if (
           error?.response?.data?.detail === "Could not validate credentials"
         ) {
-          await this.token();
+          console.log(error?.response?.data?.detail, error);
+
+          // await this.token();
         }
 
         return error;
@@ -142,8 +145,8 @@ class Api {
    * @returns {Promise}
    */
   async token() {
-    if (this.accessTokenExpireAt && Date.now() < +this.accessTokenExpireAt)
-      return;
+    // if (this.accessTokenExpireAt && Date.now() < +this.accessTokenExpireAt)
+    //   return;
 
     try {
       const { data } = await this.axios.post("/admin/token", {

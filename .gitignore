@@ -4,6 +4,7 @@
 users.json
 blocked_ips.csv
 users.csv
+session.json
 
 # Logs
 logs

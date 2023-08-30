@@ -51,15 +51,31 @@ const socket = new Socket({
 
   const nodes = await api.getNodes();
 
-  ws.logs();
+  let websockets = [];
+
+  const wss = ws.logs();
+
+  websockets.push(wss);
 
   for (let i in nodes) {
     const node = nodes[i];
 
     const ws = new Ws({ ...wsData, node });
 
-    ws.logs();
+    const wss = ws.logs();
+
+    websockets.push(wss);
   }
+
+  nodeCron.schedule(`*/30 * * * *`, async () => {
+    await api.token();
+
+    for (let i in websockets) {
+      const ws = websockets[i];
+
+      ws.access_token = api.accessToken;
+    }
+  });
 })();
 
 if (process.env.NODE_ENV.includes("production")) {
