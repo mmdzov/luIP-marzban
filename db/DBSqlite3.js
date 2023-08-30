@@ -189,7 +189,7 @@ class DBSqlite3 extends DBInterface {
   }
 
   deleteUser(email) {
-    db.run("DELETE FROM ips WHERE email = ?", email, function (err) {
+    db.run("DELETE FROM users WHERE email = ?", email, function (err) {
       if (err) {
         console.log(err);
       } else {
