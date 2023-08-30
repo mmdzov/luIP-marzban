@@ -130,9 +130,7 @@ class Api {
         if (
           error?.response?.data?.detail === "Could not validate credentials"
         ) {
-          console.log(error?.response?.data?.detail, error);
-
-          // await this.token();
+          await this.token();
         }
 
         return error;
