@@ -186,7 +186,6 @@ class Api {
    * @param {"disabled" | "active"} status
    */
   async changeUserProxyStatus(email, status) {
-    console.log("status:", status);
     try {
       const { data } = await this.axios.get(`/user/${email}`);
 
@@ -364,16 +363,8 @@ class IPGuard {
       return callback[2]();
     }
 
-    console.log(
-      data.ips.length,
-      maxAllowConnection,
-      indexOfIp,
-      process.env?.TARGET,
-    );
-
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
       if (process.env?.TARGET === "PROXY") {
-        console.log("deactive:", data.email, ip);
         await this.deactiveUserProxy(data.email);
 
         return;
@@ -432,6 +423,14 @@ class IPGuard {
     fs.writeFileSync(path, JSON.stringify(deactives));
 
     this.db.deleteUser(email);
+
+    if (process.env.TG_ENABLE === "true")
+      globalThis.bot.api.sendMessage(
+        process.env.TG_ADMIN,
+        `${email} disabled successfully.
+Duration: ${process.env.BAN_TIME} minutes
+      `,
+      );
   }
 
   /**
@@ -464,6 +463,13 @@ class IPGuard {
     );
 
     fs.writeFileSync(path, JSON.stringify(replaceData));
+
+    if (process.env.TG_ENABLE === "true")
+      globalThis.bot.api.sendMessage(
+        process.env.TG_ADMIN,
+        `${email} actived successfully.
+      `,
+      );
   }
 }
 
