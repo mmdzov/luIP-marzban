@@ -429,6 +429,8 @@ class IPGuard {
       return currentTime > activeAt;
     });
 
+    if (shouldActive.length === 0) return;
+
     for (let i in shouldActive) {
       const data = shouldActive[i];
 
