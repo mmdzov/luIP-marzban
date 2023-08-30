@@ -177,7 +177,6 @@ class File {
   constructor() {}
 
   ForceExistsFile(path, data) {
-    console.log(path)
     if (!fs.existsSync(path)) fs.writeFileSync(path, data || "");
 
     return;
