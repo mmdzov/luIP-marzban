@@ -187,9 +187,10 @@ class Api {
    */
   async changeUserProxyStatus(email, status) {
     try {
-      await this.axios.post(`/user/${email}`, {
+    const res =  await this.axios.post(`/user/${email}`, {
         status,
       });
+      console.log(res)
     } catch (e) {
       console.error(e);
     }
@@ -417,7 +418,7 @@ class IPGuard {
       activationAt: fewMinutesLater,
     });
 
-    fs.writeFileSync(deactives, JSON.stringify(deactives));
+    fs.writeFileSync(path, JSON.stringify(deactives));
 
     this.db.deleteUser(email);
   }
