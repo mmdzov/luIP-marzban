@@ -51,7 +51,7 @@ class Ws {
       banDB: new DBSqlite3(),
       socket: params.socket,
       api: params.api,
-      db: this.db,
+      db: db,
     });
     // this.params = params;
 
