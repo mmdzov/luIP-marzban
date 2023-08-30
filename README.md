@@ -10,9 +10,11 @@ Limit users in each proxy configuration
   - [Install iptables / gawk / csvtool](https://github.com/mmdzov/luIP-marzban/tree/main#install-other-requirements)
 - [Install luIP-marzban](https://github.com/mmdzov/luIP-marzban/tree/main#install-luip-marzban)
 - [Environments](https://github.com/mmdzov/luIP-marzban/tree/main#luip-marzbanenv-file)
+- [Target](https://github.com/mmdzov/luIP-marzban/tree/dev#target)
 - [users.json](https://github.com/mmdzov/luIP-marzban/tree/main#usersjson)
 - [Permissions](https://github.com/mmdzov/luIP-marzban/tree/main#permission-to-use-ipbansh--ipunbansh)
 - [Run the project](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
+- [luIP-marzban-node version](https://github.com/mmdzov/luIP-marzban/tree/dev#node-version)
 - [API Reference](https://github.com/mmdzov/luIP-marzban/tree/main#run-the-project)
 - [FAQ](https://github.com/mmdzov/luIP-marzban/tree/main#faq)
 
@@ -83,6 +85,10 @@ If you don't have node.js installed on your server, install it with nvm
 ```
 
 
+| Parameter | Description                |
+| :-------- | :------------------------- |
+| `TARGET` | You can set the target. [More](https://github.com/mmdzov/luIP-marzban/tree/dev#node-version) |
+
 #### Address configuration
 | Parameter | Description                |
 | :-------- | :------------------------- |
@@ -122,6 +128,33 @@ If you don't have node.js installed on your server, install it with nvm
 | `TG_TOKEN` | The bot token you received from @botfather |
 | `TG_ADMIN` | Your user ID that you received from @userinfobot |
 
+## Target
+You can set the target. Its value is considered as IP by default.
+
+
+### TARGET=IP
+Blocks unauthorized IPs and maintains connections
+
+Advantages
+
+1. Better user experience: Unauthorized IPs are blocked and connected users are not disconnected.
+
+2. View connected users: You can view connected users and monitor them.
+
+
+### TARGET=PROXY
+
+In this method, the focus is on enabling/disabling the proxy, and if the connections of a proxy reach its limit, it will be disabled and will be turned on again after a period of time has passed.
+
+
+Advantages
+
+1. Easier to use.
+
+2. Less consumption of resources.
+
+3. No need to install [luIP-marzban-node](https://github.com/mmdzov/luIP-marzban/tree/dev#node-version).
+
 ## users.json 
 You can set specific users in the users.json file
 
@@ -154,6 +187,10 @@ After configuring the project, run it
   npm start
 
 ```
+
+
+## Node version
+If you want the IP limiter to be supported in the nodes, first make sure in the .env file that the TARGET is equal to the IP, then install and run the [luIP-marzban-node](https://github.com/mmdzov/luIP-marzban-node) project on all your nodes.
 
 ## Stop luIP with kill process
 
