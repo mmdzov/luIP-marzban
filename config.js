@@ -187,10 +187,12 @@ class Api {
    */
   async changeUserProxyStatus(email, status) {
     try {
-    const res =  await this.axios.post(`/user/${email}`, {
+      const { data } = await this.axios.get(`/user/${email}`);
+      const res = await this.axios.put(`/user/${email}`, {
+        ...data,
         status,
       });
-      console.log(res)
+      console.log(res);
     } catch (e) {
       console.error(e);
     }
