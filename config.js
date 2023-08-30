@@ -454,7 +454,7 @@ class IPGuard {
       (item) => !shouldActive.includes(item.email),
     );
 
-    fs.writeFileSync(deactives, JSON.stringify(replaceData));
+    fs.writeFileSync(path, JSON.stringify(replaceData));
   }
 }
 
