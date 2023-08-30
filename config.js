@@ -186,10 +186,9 @@ class Api {
    * @param {"disabled" | "active"} status
    */
   async changeUserProxyStatus(email, status) {
+    console.log("status:", status);
     try {
       const { data } = await this.axios.get(`/user/${email}`);
-
-      console.log(typeof data, data);
 
       const res = await this.axios.put(
         `/user/${email}`,
@@ -203,7 +202,6 @@ class Api {
           },
         },
       );
-      console.log(res);
     } catch (e) {
       console.error(e);
     }
