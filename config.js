@@ -7,6 +7,7 @@ const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
 const crypto = require("crypto-js");
 const socket = require("socket.io");
+const { default: Rws } = require("reconnecting-websocket");
 const fs = require("fs");
 
 class Ws {
@@ -25,7 +26,14 @@ class Ws {
     }`;
 
     const db = new DBAdapter(params.DB);
-    const ws = new WebSocket(url);
+
+    const ws = new Rws(url, [], {
+      WebSocket: WebSocket,
+      connectionTimeout: 2000,
+      maxRetries: 60,
+    });
+
+    // const ws = new WebSocket(url);
 
     // retry to get token
     // ws.on("error", async (error, response) => {
