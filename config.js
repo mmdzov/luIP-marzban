@@ -317,7 +317,10 @@ class IPGuard {
 
     const indexOfIp = data.ips.findIndex((item) => item.ip === `${ip}`);
 
-    const users = new File().GetJsonFile(join(__dirname, "users.json"));
+    const users = new File().GetJsonFile(
+      join(__dirname, "users.json"),
+      JSON.stringify([]),
+    );
     let usersCsv = new File()
       .GetCsvFile(join(__dirname, "users.csv"))
       .toString();
