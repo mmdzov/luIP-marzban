@@ -7,7 +7,6 @@ const sqlite3 = require("sqlite3").verbose();
 const DBSqlite3 = require("./db/DBSqlite3");
 const crypto = require("crypto-js");
 const socket = require("socket.io");
-const { default: Rws } = require("reconnecting-websocket");
 const fs = require("fs");
 
 class Ws {
@@ -26,33 +25,7 @@ class Ws {
     }`;
 
     const db = new DBAdapter(params.DB);
-
-    const ws = new Rws(url, [], {
-      WebSocket: WebSocket,
-      connectionTimeout: 2000,
-      maxRetries: 60,
-    });
-
-    // const ws = new WebSocket(url);
-
-    // retry to get token
-    // ws.on("error", async (error, response) => {
-    //   // const api = new Api();
-
-    //   // api.create();
-
-    //   // const token = await api.token();
-
-    //   const token = await params.api.token();
-
-    //   const _ws = new Ws({ ...params, accessToken: token });
-
-    //   _ws.logs();
-
-    //   console.log("Websocket unexpected response", ws.url);
-
-    //   // console.log(error, response);
-    // });
+    const ws = new WebSocket(url);
 
     const user = new User();
     const ipGuard = new IPGuard({
@@ -67,6 +40,28 @@ class Ws {
     this.user = user;
     this.ws = ws;
     this.ipGuard = ipGuard;
+
+    // retry to get token
+    ws.on("error", async (error, response) => {
+      // const api = new Api();
+
+      // api.create();
+
+      // const token = await api.token();
+
+      // const token = await params.api.token();
+
+      // const _ws = new Ws({ ...params, accessToken: token });
+      const _ws = new Ws({ ...params });
+
+      _ws.logs();
+
+      // ws = _ws;
+
+      console.log("Websocket unexpected response", ws.url);
+
+      // console.log(error, response);
+    });
   }
 
   logs() {
