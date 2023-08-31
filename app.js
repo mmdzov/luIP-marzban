@@ -120,6 +120,9 @@ if (process.env.NODE_ENV.includes("production")) {
   }
 }
 
+
+console.log("Running luIP-marzban")
+
 // Api server
 if (process.env?.API_ENABLE === "true") {
   const PORT = process.env?.API_PORT || 3000;

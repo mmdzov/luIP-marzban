@@ -423,6 +423,8 @@ class IPGuard {
       activationAt: fewMinutesLater,
     });
 
+    console.log(email, fewMinutesLater, deactives, path);
+
     fs.writeFileSync(path, JSON.stringify(deactives));
 
     this.db.deleteUser(email);
