@@ -17,6 +17,8 @@ require("dotenv").config();
 const api = new Api();
 const DBType = new DBSqlite3();
 
+DBType.deleteInactiveUsers()
+
 def();
 
 const socket = new Socket({
@@ -107,10 +109,11 @@ if (process.env.NODE_ENV.includes("production")) {
     );
   }
 
-  if (process.env.TARGET === "PROXY") {
+  if (process.env?.TARGET === "PROXY") {
     nodeCron.schedule(
       `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
       () => {
+        console.log("Check for unban users")
         new IPGuard({
           api,
           db: DBType,
@@ -121,7 +124,6 @@ if (process.env.NODE_ENV.includes("production")) {
 }
 
 
-console.log("Running luIP-marzban")
 
 // Api server
 if (process.env?.API_ENABLE === "true") {
