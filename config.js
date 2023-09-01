@@ -76,6 +76,8 @@ class Ws {
 
       if (data.length === 0) return;
 
+      console.log(`Update ${new Date().toLocaleString("fa-IR")} : `, data);
+
       let num = data.length;
       while (num--) {
         const item = data[num];
@@ -134,6 +136,7 @@ class Api {
           error?.response?.data?.detail === "Could not validate credentials"
         ) {
           await this.token();
+          console.log("New Token:", this.accessToken);
         }
 
         return error;
@@ -366,6 +369,8 @@ class IPGuard {
       return callback[2]();
     }
 
+    console.log(data.ips.length, maxAllowConnection, indexOfIp);
+
     if (data.ips.length >= maxAllowConnection && indexOfIp === -1) {
       if (process.env?.TARGET === "PROXY") {
         await this.deactiveUserProxy(data.email);
@@ -410,9 +415,12 @@ class IPGuard {
 
     const deactives = new File().GetJsonFile(path);
 
+    console.log("Deactives:", deactives);
     if (deactives.some((item) => item.email === email) === true) return;
 
+    console.log("should to disable");
     await this.api.changeUserProxyStatus(email, "disabled");
+    console.log("successfully disabled");
 
     const fewMinutesLater = new Date(
       Date.now() + 1000 * 60 * process.env?.BAN_TIME,
@@ -461,10 +469,10 @@ Duration: ${process.env.BAN_TIME} minutes
       await this.api.changeUserProxyStatus(data.email, "active");
     }
 
-    shouldActive = shouldActive.map((item) => item.email);
+    const _shouldActive = shouldActive.map((item) => item.email);
 
     const replaceData = deactives.filter(
-      (item) => !shouldActive.includes(item.email),
+      (item) => !_shouldActive.includes(item.email),
     );
 
     fs.writeFileSync(path, JSON.stringify(replaceData));
@@ -472,7 +480,9 @@ Duration: ${process.env.BAN_TIME} minutes
     if (process.env.TG_ENABLE === "true")
       globalThis.bot.api.sendMessage(
         process.env.TG_ADMIN,
-        `${email} actived successfully.
+        `${shouldActive
+          .map((item) => item.email)
+          .join(", ")} actived successfully.
       `,
       );
   }

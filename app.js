@@ -114,7 +114,7 @@ if (process.env.NODE_ENV.includes("production")) {
     nodeCron.schedule(
       `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
       () => {
-        console.log("Check for unban users");
+        // console.log("Check for unban users");
         new IPGuard({
           api,
           db: DBType,
