@@ -47,12 +47,12 @@ class Ws {
 
       // api.create();
 
-      // const token = await api.token();
+      // const token = await this.api.token();
 
-      // const token = await params.api.token();
+      const token = await params.api.token();
 
-      // const _ws = new Ws({ ...params, accessToken: token });
-      const _ws = new Ws({ ...params });
+      const _ws = new Ws({ ...params, accessToken: token });
+      // const _ws = new Ws({ ...params });
 
       _ws.logs();
 
