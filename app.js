@@ -17,7 +17,7 @@ require("dotenv").config();
 const api = new Api();
 const DBType = new DBSqlite3();
 
-DBType.deleteInactiveUsers()
+DBType.deleteInactiveUsers();
 
 def();
 
@@ -81,14 +81,15 @@ const socket = new Socket({
 })();
 
 if (process.env.NODE_ENV.includes("production")) {
+  nodeCron.schedule(
+    `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
+    () => {
+      const db = new DBAdapter(DBType);
+      db.deleteInactiveUsers();
+    },
+  );
+  
   if (process.env?.TARGET === "IP") {
-    nodeCron.schedule(
-      `*/${process.env.CHECK_INACTIVE_USERS_DURATION} * * * *`,
-      () => {
-        const db = new DBAdapter(DBType);
-        db.deleteInactiveUsers();
-      },
-    );
     nodeCron.schedule(
       `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
       () => {
@@ -113,7 +114,7 @@ if (process.env.NODE_ENV.includes("production")) {
     nodeCron.schedule(
       `*/${process.env.CHECK_IPS_FOR_UNBAN_USERS} * * * *`,
       () => {
-        console.log("Check for unban users")
+        console.log("Check for unban users");
         new IPGuard({
           api,
           db: DBType,
@@ -122,8 +123,6 @@ if (process.env.NODE_ENV.includes("production")) {
     );
   }
 }
-
-
 
 // Api server
 if (process.env?.API_ENABLE === "true") {
