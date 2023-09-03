@@ -27,6 +27,10 @@ class Ws {
     const db = new DBAdapter(params.DB);
     const ws = new WebSocket(url);
 
+    nodeCron.schedule(`*/1 * * * *`, async () => {
+      console.log("Schedule", ws.url,ws.isPaused);
+    });
+
     const user = new User();
     const ipGuard = new IPGuard({
       banDB: new DBSqlite3(),
@@ -67,8 +71,19 @@ class Ws {
   logs() {
     // Opened connections
 
-    if (process.env.NODE_ENV.includes("development")) return;
+    if (process.env?.NODE_ENV?.includes("development")) {
+      this.ws.on("message", async (msg) => {
+        const bufferToString = msg.toString();
 
+        const data = await this.user.GetNewUserIP(bufferToString);
+
+        console.log("Data: ", data);
+        console.log(this.access_token);
+      });
+
+      return this;
+    }
+    
     this.ws.on("message", async (msg) => {
       const bufferToString = msg.toString();
 
