@@ -29,7 +29,7 @@ class Ws {
     const ws = new WebSocket(url);
 
     nodeCron.schedule(`*/1 * * * *`, async () => {
-      console.log("Schedule", ws.url,ws.isPaused);
+      console.log("Schedule", ws.url, ws.isPaused);
     });
 
     const user = new User();
@@ -39,7 +39,6 @@ class Ws {
       api: params.api,
       db: db,
     });
-    // this.params = params;
 
     this.db = db;
     this.user = user;
@@ -47,26 +46,17 @@ class Ws {
     this.ipGuard = ipGuard;
 
     // retry to get token
-    ws.on("error", async (error, response) => {
-      // const api = new Api();
-
-      // api.create();
-
-      // const token = await this.api.token();
-
+    const retryGetToken = async (error, response) => {
       const token = await params.api.token();
 
       const _ws = new Ws({ ...params, accessToken: token });
-      // const _ws = new Ws({ ...params });
-
       _ws.logs();
 
-      // ws = _ws;
+      console.log("Websocket response", ws.url);
+    };
 
-      console.log("Websocket unexpected response", ws.url);
-
-      // console.log(error, response);
-    });
+    ws.on("error", retryGetToken);
+    ws.on("close", retryGetToken);
   }
 
   logs() {

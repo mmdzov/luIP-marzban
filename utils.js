@@ -51,18 +51,18 @@ class User {
 
       if (/[a-zA-Z]/g.test(params)) chunks.shift();
 
-      try {
-        const { data } = await axios.get(`http://ip-api.com/json/${chunks[0]}`);
+      // try {
+      //   const { data } = await axios.get(`http://ip-api.com/json/${chunks[0]}`);
 
-        if (
-          data.countryCode !==
-          (process.env?.COUNTRY_CODE?.toUpperCase() || "IR")
-        )
-          return {};
-      } catch (e) {
-        // console.error(e);
-        return {};
-      }
+      //   if (  
+      //     data.countryCode !==
+      //     (process.env?.COUNTRY_CODE?.toUpperCase() || "IR")
+      //   )
+      //     return {};
+      // } catch (e) {
+      //   console.error(e);
+      //   return {};
+      // }
 
       return { ip: chunks[0], port: chunks[1] };
     };
